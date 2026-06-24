@@ -1563,36 +1563,60 @@
             const a = document.createElement('a');
             a.href = url; 
             a.download = (document.getElementById('proj-code')?.value || 'Logframe_Data') + '.json'; 
+            document.body.appendChild(a);
             a.click(); 
+            document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showToast("ບັນທຶກສຳເລັດແລ້ວ! (Saved successfully)", "success");
+            showToast("ບັນທຶກສຳເລັດແລ້ວ! (ກວດເບິ່ງໃນໂຟນເດີ Downloads)", "success");
         }
 
         async function saveToLocalFile() {
             const jsonString = getProjectDataAsJSON();
-            // ກວດສອບວ່າລັນໃນ Electron ຫຼື ບໍ່
+            const defaultName = (document.getElementById('proj-code')?.value || 'Logframe') + '.json';
             const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
             
             try {
-                // ຖ້າເປັນ Web Browser ປົກກະຕິ ໃຫ້ໃຊ້ File Picker
-                if (window.showSaveFilePicker && !isElectron) {
-                    const handle = await window.showSaveFilePicker({
-                        suggestedName: (document.getElementById('proj-code')?.value || 'Logframe') + '.json',
-                        types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
-                    });
-                    const writable = await handle.createWritable();
-                    await writable.write(jsonString);
-                    await writable.close();
-                    showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
-                } else {
-                    // ຖ້າເປັນ Electron ຫຼື Browser ທີ່ບໍ່ຮອງຮັບ ໃຫ້ໃຊ້ການດາວໂຫຼດແບບທຳມະດາ
-                    saveAsJSON(); 
+                // 1. ກວດສອບວ່າລັນໃນ Electron ທີ່ມີການເຊື່ອມຕໍ່ IPC ຫຼື ບໍ່
+                if (window.electronAPI && window.electronAPI.saveFile) {
+                    const result = await window.electronAPI.saveFile(jsonString, defaultName);
+                    if (result.success) {
+                        showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
+                    } else if (!result.canceled) {
+                        showToast("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ: " + result.error, "error");
+                    }
+                    return;
                 }
-            } catch (err) {
-                // ຖ້າ User ບໍ່ໄດ້ກົດ Cancel (AbortError) ແຕ່ເກີດ Error ອື່ນ ໃຫ້ລອງໃຊ້ແບບທຳມະດາ
-                if (err.name !== 'AbortError') {
+
+                // 2. ຖ້າເປັນ Electron ແຕ່ບໍ່ມີ IPC ໃຫ້ດາວໂຫຼດເລີຍ (ປ້ອງກັນບັນຫາໄຟລ໌ 0 bytes)
+                if (isElectron) {
                     saveAsJSON();
+                    return;
                 }
+
+                // 3. ລອງໃຊ້ File System Access API (ໃຊ້ໄດ້ໃນ Web ປົກກະຕິ)
+                if (window.showSaveFilePicker) {
+                    try {
+                        const handle = await window.showSaveFilePicker({
+                            suggestedName: defaultName,
+                            types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
+                        });
+                        const writable = await handle.createWritable();
+                        await writable.write(jsonString);
+                        await writable.close();
+                        showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
+                        return; // ສຳເລັດແລ້ວ ອອກຈາກຟັງຊັນ
+                    } catch (e) {
+                        if (e.name === 'AbortError') return; // User ກົດ Cancel
+                        console.warn("File Picker API ຖືກບລັອກ, ປ່ຽນໄປໃຊ້ແບບດາວໂຫຼດ:", e);
+                    }
+                }
+                
+                // 4. Fallback ສຳລັບ Web Browser ທຳມະດາ ທີ່ບໍ່ຮອງຮັບ API ຂ້າງເທິງ
+                saveAsJSON();
+                
+            } catch (err) {
+                console.error("Save error:", err);
+                showToast("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ: " + err.message, "error");
             }
         }
 
@@ -1600,20 +1624,45 @@
             const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
             
             try {
-                if (window.showOpenFilePicker && !isElectron) {
-                    const [fileHandle] = await window.showOpenFilePicker({
-                        types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
-                    });
-                    const file = await fileHandle.getFile();
-                    const contents = await file.text();
-                    processImportedData(contents);
-                } else {
-                    document.getElementById('importJsonInput').click(); // Fallback ສຳລັບ Electron
+                // 1. ກວດສອບວ່າລັນໃນ Electron ທີ່ມີການເຊື່ອມຕໍ່ IPC ຫຼື ບໍ່
+                if (window.electronAPI && window.electronAPI.openFile) {
+                    const result = await window.electronAPI.openFile();
+                    if (result.success && result.data) {
+                        processImportedData(result.data);
+                    } else if (!result.canceled) {
+                        showToast("ເກີດຂໍ້ຜິດພາດໃນການເປີດໄຟລ໌: " + result.error, "error");
+                    }
+                    return;
                 }
-            } catch (err) {
-                if (err.name !== 'AbortError') {
+
+                // 2. ຖ້າເປັນ Electron ແຕ່ບໍ່ມີ IPC
+                if (isElectron) {
                     document.getElementById('importJsonInput').click();
+                    return;
                 }
+
+                // 3. ລອງໃຊ້ File System Access API ສຳລັບ Web
+                if (window.showOpenFilePicker) {
+                    try {
+                        const [fileHandle] = await window.showOpenFilePicker({
+                            types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
+                        });
+                        const file = await fileHandle.getFile();
+                        const contents = await file.text();
+                        processImportedData(contents);
+                        return; // ສຳເລັດແລ້ວ ອອກຈາກຟັງຊັນ
+                    } catch (e) {
+                        if (e.name === 'AbortError') return; // User ກົດ Cancel
+                        console.warn("File Picker API ຖືກບລັອກ, ປ່ຽນໄປໃຊ້ແບບ Input ປົກກະຕິ:", e);
+                    }
+                }
+                
+                // 4. Fallback ໃຊ້ Input File ປົກກະຕິ
+                document.getElementById('importJsonInput').click();
+                
+            } catch (err) {
+                console.error("Open error:", err);
+                showToast("ເກີດຂໍ້ຜິດພາດໃນການເປີດໄຟລ໌: " + err.message, "error");
             }
         }
 
