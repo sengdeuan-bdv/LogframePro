@@ -151,8 +151,8 @@
                 <button onclick="openLocalFile()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ເປີດໄຟລ໌ໂຄງການຈາກເຄື່ອງ (Open Project)">
                     <i class="fas fa-folder-open text-lg text-yellow-600 mb-1"></i> <span data-i18n="btn-open">Open</span>
                 </button>
-                <button onclick="saveToLocalFile()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ບັນທຶກໂຄງການລົງເຄື່ອງ (Save Project As)">
-                    <i class="fas fa-save text-lg text-blue-600 mb-1"></i> <span data-i18n="btn-save-as">Save As</span>
+                <button onclick="downloadProject()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ດາວໂຫຼດໂຄງການລົງເຄື່ອງ (Download Project)">
+                    <i class="fas fa-download text-lg text-blue-600 mb-1"></i> <span data-i18n="btn-download">Download</span>
                 </button>
                 <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importJSON(event)">
                 <button onclick="saveToCache()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ບັນທຶກຊົ່ວຄາວໃນແຄສ (Cloud/Firestore) [Ctrl+Shift+V ຫຼື Ctrl+S]">
@@ -855,7 +855,7 @@
                 'menu-project': 'Project',
                 'tab-project': 'Project', 'tab-logframe': 'Logframe', 'tab-tracking': 'Tracking', 'tab-planning': 'Planning', 'tab-budget': 'Budget', 'tab-risk': 'Risk Mgt', 'tab-settings': 'Settings', 'tab-dashboard': 'Dashboard',
                 'btn-save-html': 'Save HTML', 'btn-json': 'JSON', 'btn-import': 'Import', 'btn-excel': 'Excel', 'btn-word': 'Word',
-                'btn-open': 'Open File', 'btn-save-as': 'Save As...',
+                'btn-open': 'Open File', 'btn-download': 'Download',
                 'btn-add': 'Add', 'btn-sync': 'Sync from Logframe', 'btn-add-year': 'Add Year', 'btn-sync-dash': 'Refresh Data',
                 'btn-add-goal': 'Add Goal', 'btn-add-purpose': 'Add Purpose', 'btn-add-output': 'Add Output', 'btn-add-activity': 'Add Activity', 'btn-add-risk': 'Add Risk Row',
                 'btn-quick-save': 'Quick Save', 'btn-restore-cache': 'Restore',
@@ -907,7 +907,7 @@
                 'menu-project': 'ໂຄງການ',
                 'tab-project': 'ໂຄງການ', 'tab-logframe': 'Logframe', 'tab-tracking': 'ຕິດຕາມຕົວຊີ້ວັດ', 'tab-planning': 'ແຜນວຽກ', 'tab-budget': 'ງົບປະມານ', 'tab-risk': 'ຈັດການຄວາມສ່ຽງ', 'tab-settings': 'ຕັ້ງຄ່າ', 'tab-dashboard': 'ແຜງຄວບຄຸມ',
                 'btn-save-html': 'ບັນທຶກ HTML', 'btn-json': 'JSON', 'btn-import': 'ນຳເຂົ້າ', 'btn-excel': 'Excel', 'btn-word': 'Word',
-                'btn-open': 'ເປີດໄຟລ໌', 'btn-save-as': 'ບັນທຶກເປັນ...',
+                'btn-open': 'ເປີດໄຟລ໌', 'btn-download': 'ດາວໂຫຼດ',
                 'btn-add': 'ເພີ່ມ', 'btn-sync': 'ດຶງຂໍ້ມູນຈາກ Logframe', 'btn-add-year': 'ເພີ່ມປີ', 'btn-sync-dash': 'ອັບເດດຂໍ້ມູນ',
                 'btn-add-goal': 'ເພີ່ມເປົ້າໝາຍ', 'btn-add-purpose': 'ເພີ່ມຈຸດປະສົງ', 'btn-add-output': 'ເພີ່ມຜົນໄດ້ຮັບ', 'btn-add-activity': 'ເພີ່ມກິດຈະກຳ', 'btn-add-risk': 'ເພີ່ມຄວາມສ່ຽງ',
                 'btn-quick-save': 'ບັນທຶກດ່ວນ', 'btn-restore-cache': 'ດຶງຂໍ້ມູນຄືນ',
@@ -1557,6 +1557,10 @@
         }
 
         function saveAsJSON() {
+            downloadProject();
+        }
+
+        function downloadProject() {
             const jsonString = getProjectDataAsJSON();
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -1567,61 +1571,7 @@
             a.click(); 
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
-            showToast("ບັນທຶກສຳເລັດແລ້ວ! (ກວດເບິ່ງໃນໂຟນເດີ Downloads)", "success");
-        }
-
-        async function saveToLocalFile() {
-            const jsonString = getProjectDataAsJSON();
-            const defaultName = (document.getElementById('proj-code')?.value || 'Logframe') + '.json';
-            const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
-            
-            try {
-                // 1. ກວດສອບວ່າລັນໃນ Electron ທີ່ມີການເຊື່ອມຕໍ່ IPC ຫຼື ບໍ່
-                if (window.electronAPI && window.electronAPI.saveFile) {
-                    const result = await window.electronAPI.saveFile(jsonString, defaultName);
-                    if (result.success) {
-                        showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
-                    } else if (!result.canceled) {
-                        showToast("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ: " + result.error, "error");
-                    }
-                    return;
-                }
-
-                // 2. ຖ້າເປັນ Electron ແຕ່ບໍ່ມີ IPC ໃຫ້ດາວໂຫຼດເລີຍ (ປ້ອງກັນບັນຫາໄຟລ໌ 0 bytes)
-                if (isElectron) {
-                    saveAsJSON();
-                    return;
-                }
-
-                // 3. ລອງໃຊ້ File System Access API (ໃຊ້ໄດ້ໃນ Web ປົກກະຕິ)
-                if (window.showSaveFilePicker) {
-                    try {
-                        const handle = await window.showSaveFilePicker({
-                            suggestedName: defaultName,
-                            types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
-                        });
-                        const writable = await handle.createWritable();
-                        
-                        // ແກ້ບັນຫາໄຟລ໌ 0 bytes: ສ້າງເປັນ Blob ກ່ອນຂຽນລົງໄຟລ໌
-                        const blob = new Blob([jsonString], { type: 'application/json' });
-                        await writable.write(blob);
-                        await writable.close();
-                        
-                        showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
-                        return; // ສຳເລັດແລ້ວ ອອກຈາກຟັງຊັນ
-                    } catch (e) {
-                        if (e.name === 'AbortError') return; // User ກົດ Cancel
-                        console.warn("File Picker API ຖືກບລັອກ, ປ່ຽນໄປໃຊ້ແບບດາວໂຫຼດ:", e);
-                    }
-                }
-                
-                // 4. Fallback ສຳລັບ Web Browser ທຳມະດາ ທີ່ບໍ່ຮອງຮັບ API ຂ້າງເທິງ
-                saveAsJSON();
-                
-            } catch (err) {
-                console.error("Save error:", err);
-                showToast("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ: " + err.message, "error");
-            }
+            showToast("ດາວໂຫຼດສຳເລັດແລ້ວ! (ກວດເບິ່ງໃນໂຟນເດີ Downloads)", "success");
         }
 
         async function openLocalFile() {
@@ -3267,7 +3217,7 @@
         window.setLanguage = setLanguage;
         window.saveAsHTML = saveAsHTML;
         window.saveAsJSON = saveAsJSON;
-        window.saveToLocalFile = saveToLocalFile;
+        window.downloadProject = downloadProject;
         window.openLocalFile = openLocalFile;
         window.importJSON = importJSON;
         window.execCmd = execCmd;
