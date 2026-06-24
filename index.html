@@ -1601,8 +1601,12 @@
                             types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
                         });
                         const writable = await handle.createWritable();
-                        await writable.write(jsonString);
+                        
+                        // ແກ້ບັນຫາໄຟລ໌ 0 bytes: ສ້າງເປັນ Blob ກ່ອນຂຽນລົງໄຟລ໌
+                        const blob = new Blob([jsonString], { type: 'application/json' });
+                        await writable.write(blob);
                         await writable.close();
+                        
                         showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
                         return; // ສຳເລັດແລ້ວ ອອກຈາກຟັງຊັນ
                     } catch (e) {
