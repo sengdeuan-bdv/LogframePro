@@ -143,12 +143,17 @@
                     <span class="cursor-pointer hover:text-blue-600 font-medium text-blue-800 border-b-2 border-blue-600 pb-1" data-i18n="menu-project">Project</span>
                 </div>
             </div>
-            <div class="flex bg-white rounded border border-gray-300 overflow-hidden text-xs font-bold shadow-sm">
-                <button onclick="setLanguage('en')" id="lang-en" class="px-3 py-1 hover:bg-gray-100 text-gray-500 transition-colors">EN</button>
-                <div class="w-px bg-gray-300"></div>
-                <button onclick="setLanguage('lo')" id="lang-lo" class="px-3 py-1 bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors">LA</button>
-                <div class="w-px bg-gray-300"></div>
-                <button onclick="setLanguage('bi')" id="lang-bi" class="px-3 py-1 hover:bg-gray-100 text-gray-500 transition-colors" title="Bilingual / ທັງສອງພາສາ">EN/LA</button>
+            <div class="flex items-center gap-4">
+                <div class="text-[10px] text-gray-500 text-right hidden sm:block bg-blue-100/50 px-2 py-1 rounded border border-blue-200/50">
+                    <i class="fas fa-code text-blue-400 mr-1"></i> <span data-i18n="lbl-developer">Developed by:</span> <span class="font-bold text-blue-700">Sengdeuan Boutdavong (RMEL)</span>
+                </div>
+                <div class="flex bg-white rounded border border-gray-300 overflow-hidden text-xs font-bold shadow-sm">
+                    <button onclick="setLanguage('en')" id="lang-en" class="px-3 py-1 hover:bg-gray-100 text-gray-500 transition-colors">EN</button>
+                    <div class="w-px bg-gray-300"></div>
+                    <button onclick="setLanguage('lo')" id="lang-lo" class="px-3 py-1 bg-blue-100 text-blue-800 hover:bg-blue-200 transition-colors">LA</button>
+                    <div class="w-px bg-gray-300"></div>
+                    <button onclick="setLanguage('bi')" id="lang-bi" class="px-3 py-1 hover:bg-gray-100 text-gray-500 transition-colors" title="Bilingual / ທັງສອງພາສາ">EN/LA</button>
+                </div>
             </div>
         </div>
         
@@ -786,14 +791,14 @@
                 'opt-levels-3': '3 Levels (Goals, Purposes, Outputs)',
                 'opt-levels-2': '2 Levels (Goals, Purposes)',
                 'lbl-chart-budget': 'Budget Distribution', 'lbl-chart-progress': 'Indicators Progress Overview',
-                'stat-total-budget': 'Total Budget (USD)', 'stat-avg-progress': 'Average Progress', 'stat-total-activities': 'Total Activities',
-                'btn-toggle-archive': 'Hide Archived (Completed/Cancelled)',
-                'btn-show-archive': 'Show All Indicators',
-                'btn-show-hidden': 'Unhide All',
-                'btn-unhide-cols': 'Show Notes Columns',
-                'btn-show-years': 'Show Hidden Years',
-                'btn-show-cols': 'Show Hidden Columns',
-                'btn-show-rows': 'Show Hidden Rows'
+                'btn-show-rows': 'Show Hidden Rows',
+                'btn-add-disagg-row': 'Disaggregation',
+                'lbl-disagg-title': 'Disaggregation Categories',
+                'desc-disagg': 'Define categories for data disaggregation (e.g., Gender, Location, Ethnicity) and their respective options. Separate options with commas.',
+                'btn-add-disagg': 'Add Category',
+                'lbl-cat-name': 'Category Name',
+                'lbl-cat-options': 'Options (Comma separated)',
+                'lbl-developer': 'Developed by:'
             },
             'lo': {
                 'menu-project': 'ໂຄງການ',
@@ -840,14 +845,14 @@
                 'opt-levels-3': '3 ລະດັບ (ເປົ້າໝາຍ, ຈຸດປະສົງ, ຜົນໄດ້ຮັບ)',
                 'opt-levels-2': '2 ລະດັບ (ເປົ້າໝາຍ, ຈຸດປະສົງ)',
                 'lbl-chart-budget': 'ສັດສ່ວນງົບປະມານຕາມກິດຈະກຳ', 'lbl-chart-progress': 'ພາບລວມຄວາມຄືບໜ້າຕົວຊີ້ວັດ',
-                'stat-total-budget': 'ງົບປະມານລວມ (USD)', 'stat-avg-progress': 'ຄວາມຄືບໜ້າສະເລ່ຍ', 'stat-total-activities': 'ຈຳນວນກິດຈະກຳທັງໝົດ',
-                'btn-toggle-archive': 'ຊ່ອນໂຕທີ່ຍົກເລີກ/ສຳເລັດ',
-                'btn-show-archive': 'ສະແດງຕົວຊີ້ວັດທັງໝົດ',
-                'btn-show-hidden': 'ສະແດງໂຕທີ່ຊ່ອນ',
-                'btn-unhide-cols': 'ສະແດງຖັນບັນທຶກ',
-                'btn-show-years': 'ສະແດງປີທີ່ຊ່ອນ',
-                'btn-show-cols': 'ສະແດງຖັນທີ່ຊ່ອນ',
-                'btn-show-rows': 'ສະແດງແຖວທີ່ຊ່ອນ'
+                'btn-show-rows': 'ສະແດງແຖວທີ່ຊ່ອນ',
+                'btn-add-disagg-row': 'ແຍກຍ່ອຍ',
+                'lbl-disagg-title': 'ຖານຂໍ້ມູນ ການແຍກແຍະຕົວຊີ້ວັດ (Disaggregation)',
+                'desc-disagg': 'ກຳນົດໝວດໝູ່ສຳລັບການແຍກແຍະຂໍ້ມູນ (ຕົວຢ່າງ: ເພດ, ສະຖານທີ່, ຊົນເຜົ່າ, ກຸ່ມອາຍຸ) ແລະ ຕົວເລືອກຕ່າງໆ ໂດຍໃຊ້ໝາຍຈຸດ (,) ຂັ້ນລະຫວ່າງຕົວເລືອກ.',
+                'btn-add-disagg': 'ເພີ່ມໝວດໝູ່ໃໝ່',
+                'lbl-cat-name': 'ຊື່ໝວດໝູ່',
+                'lbl-cat-options': 'ຕົວເລືອກ (ຂັ້ນດ້ວຍຈຸດ ,)',
+                'lbl-developer': 'ພັດທະນາໂດຍ:'
             }
         };
 
