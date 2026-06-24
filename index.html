@@ -2591,16 +2591,16 @@
                 let rowClass = 'border-b ';
 
                 if(isGoalRow(rawText)) {
-                    indent = 'font-bold text-blue-900';
+                    indent = 'font-bold text-blue-900 pl-4';
                     rowClass += 'bg-blue-100';
                 } else if(isPurposeRow(rawText)) {
-                    indent = 'font-bold pl-4 text-gray-800';
+                    indent = 'font-bold text-gray-800 pl-10';
                     rowClass += 'bg-gray-100';
                 } else if(isOutputRow(rawText)) {
-                    indent = 'font-semibold pl-8 text-blue-800';
+                    indent = 'font-semibold text-blue-800 pl-16';
                     rowClass += 'bg-blue-50';
                 } else if(isActivityRow(rawText)) {
-                    indent = 'pl-12 text-gray-700';
+                    indent = 'pl-24 text-gray-700';
                     rowClass += 'hover:bg-gray-50 bg-white';
                     isActivity = true;
                 }
@@ -2987,7 +2987,12 @@
             
             if(hasValue) {
                 const overallActualTd = tr.querySelector('.track-actual');
-                const select = tr.querySelector('.unit-type-selector');
+                let select = tr.querySelector('.unit-type-selector');
+                if (!select && tr.classList.contains('disagg-row-track')) {
+                    const parentRow = document.querySelector(`tr.indicator-row-track[data-key="${tr.dataset.parentKey}"]`);
+                    if(parentRow) select = parentRow.querySelector('.unit-type-selector');
+                }
+
                 const isPercent = select && select.value === 'pct';
                 
                 overallActualTd.innerText = sum + (isPercent ? '%' : '');
@@ -3001,39 +3006,63 @@
             if (!logframeTable || !trackingTbody) return;
 
             const existingData = {};
-            trackingTbody.querySelectorAll('tr.indicator-row-track').forEach(tr => {
-                const titleKey = tr.dataset.key;
-                if (titleKey) {
+            let currentIndKey = null;
+
+            trackingTbody.querySelectorAll('tr').forEach(tr => {
+                if (tr.classList.contains('indicator-row-track')) {
+                    const titleKey = tr.dataset.key;
+                    if (titleKey) {
+                        const yearlyData = [];
+                        const yTargets = tr.querySelectorAll('.yearly-target');
+                        const yActuals = tr.querySelectorAll('.yearly-actual');
+                        const yNotes = tr.querySelectorAll('.yearly-notes');
+                        for(let i=0; i < trackingYearCount; i++){
+                            yearlyData.push({
+                                target: yTargets[i] ? yTargets[i].innerText.trim() : '',
+                                actual: yActuals[i] ? yActuals[i].innerText.trim() : '',
+                                notes: yNotes[i] ? yNotes[i].innerHTML : ''
+                            });
+                        }
+
+                        let extractedNotes = '';
+                        const notesDiv = tr.querySelector('.notes-content');
+                        if (notesDiv) extractedNotes = notesDiv.innerHTML;
+                        else extractedNotes = tr.cells[tr.cells.length-1].innerHTML;
+
+                        existingData[titleKey] = {
+                            unitType: tr.querySelector('.unit-type-selector') ? tr.querySelector('.unit-type-selector').value : 'num',
+                            frequency: tr.querySelector('.track-frequency') ? tr.querySelector('.track-frequency').value : 'yearly',
+                            responsible: tr.querySelector('.track-resp') ? tr.querySelector('.track-resp').innerText.trim() : '',
+                            baseline: tr.querySelector('.track-baseline') ? tr.querySelector('.track-baseline').innerText.trim() : '',
+                            target: tr.querySelector('.track-target').innerText.trim(),
+                            actual: tr.querySelector('.track-actual').innerText.trim(),
+                            progress: tr.querySelector('.track-progress').innerText.trim(),
+                            progressClass: tr.querySelector('.track-progress').className,
+                            status: tr.querySelector('.status-selector') ? tr.querySelector('.status-selector').value : 'active',
+                            notes: extractedNotes,
+                            yearly: yearlyData,
+                            disaggregations: []
+                        };
+                        currentIndKey = titleKey;
+                    }
+                } else if (tr.classList.contains('disagg-row-track') && currentIndKey) {
                     const yearlyData = [];
                     const yTargets = tr.querySelectorAll('.yearly-target');
                     const yActuals = tr.querySelectorAll('.yearly-actual');
-                    const yNotes = tr.querySelectorAll('.yearly-notes');
                     for(let i=0; i < trackingYearCount; i++){
                         yearlyData.push({
                             target: yTargets[i] ? yTargets[i].innerText.trim() : '',
                             actual: yActuals[i] ? yActuals[i].innerText.trim() : '',
-                            notes: yNotes[i] ? yNotes[i].innerHTML : ''
                         });
                     }
-
-                    let extractedNotes = '';
-                    const notesDiv = tr.querySelector('.notes-content');
-                    if (notesDiv) extractedNotes = notesDiv.innerHTML;
-                    else extractedNotes = tr.cells[tr.cells.length-1].innerHTML;
-
-                    existingData[titleKey] = {
-                        unitType: tr.querySelector('.unit-type-selector') ? tr.querySelector('.unit-type-selector').value : 'num',
-                        frequency: tr.querySelector('.track-frequency') ? tr.querySelector('.track-frequency').value : 'yearly',
-                        responsible: tr.querySelector('.track-resp') ? tr.querySelector('.track-resp').innerText.trim() : '',
+                    existingData[currentIndKey].disaggregations.push({
+                        name: tr.querySelector('.disagg-name').innerText.trim(),
                         baseline: tr.querySelector('.track-baseline') ? tr.querySelector('.track-baseline').innerText.trim() : '',
                         target: tr.querySelector('.track-target').innerText.trim(),
                         actual: tr.querySelector('.track-actual').innerText.trim(),
                         progress: tr.querySelector('.track-progress').innerText.trim(),
-                        progressClass: tr.querySelector('.track-progress').className,
-                        status: tr.querySelector('.status-selector') ? tr.querySelector('.status-selector').value : 'active',
-                        notes: extractedNotes,
                         yearly: yearlyData
-                    };
+                    });
                 }
             });
 
@@ -3060,15 +3089,14 @@
                 let bgColor = '';
 
                 if (isGoalRow(rawText)) {
-                    indentClass = 'font-bold text-blue-900'; bgColor = 'bg-blue-100'; isHeader = true;
+                    indentClass = 'font-bold text-blue-900 pl-4'; bgColor = 'bg-blue-100'; isHeader = true;
                 } else if (isOutputRow(rawText)) {
-                    indentClass = 'font-semibold pl-8 text-blue-800'; bgColor = 'bg-blue-50'; isHeader = true;
+                    indentClass = 'font-semibold text-blue-800 pl-16'; bgColor = 'bg-blue-50'; isHeader = true;
                 } else if (isPurposeRow(rawText)) {
-                    indentClass = 'font-bold pl-4'; bgColor = 'bg-gray-200'; isHeader = true;
+                    indentClass = 'font-bold text-gray-800 pl-10'; bgColor = 'bg-gray-200'; isHeader = true;
                 }
 
                 if (isHeader) {
-                    // ເອົາປຸ່ມ Action ອອກຈາກ Header ໃນໜ້າຕິດຕາມເພື່ອໃຫ້ສະອາດຕາ
                     const tempDiv = document.createElement('div');
                     tempDiv.innerHTML = visibleHtml;
                     const btnDiv = tempDiv.querySelector('.absolute.top-1.right-1');
@@ -3077,7 +3105,6 @@
                     const trHeader = document.createElement('tr');
                     trHeader.className = bgColor;
                     
-                    // ໃຊ້ sticky ກັບ div ທາງໃນ ເພື່ອໃຫ້ຂໍ້ຄວາມເລື່ອນຕາມໜ້າຈໍ
                     trHeader.innerHTML = `
                         <td class="p-0 border-r" colspan="${colspanTotal}">
                             <div class="sticky left-0 inline-block px-4 py-2 w-fit max-w-[90vw] ${indentClass}">
@@ -3095,7 +3122,7 @@
 
                             if (rawIndText) {
                                 const dataKey = rawText.substring(0, 50).replace(/\s/g, '') + '_' + rawIndText.substring(0, 50).replace(/\s/g, '');
-                                const prev = existingData[dataKey] || { unitType: 'num', frequency: 'yearly', responsible: '', baseline: '', target: '', actual: '', progress: '-', progressClass: 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress', status: 'active', notes: '<div class="en-text"></div><div class="lao-text"></div>', yearly: [] };
+                                const prev = existingData[dataKey] || { unitType: 'num', frequency: 'yearly', responsible: '', baseline: '', target: '', actual: '', progress: '-', progressClass: 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress', status: 'active', notes: '<div class="en-text"></div><div class="lao-text"></div>', yearly: [], disaggregations: [] };
 
                                 let yearlyCellsHtml = '';
                                 for(let i=0; i<trackingYearCount; i++) {
@@ -3117,9 +3144,12 @@
                                 trInd.dataset.key = dataKey;
                                 
                                 trInd.innerHTML = `
-                                    <td class="px-4 py-2 border-r pl-12 text-gray-700 relative group sticky-col inherit-bg">
-                                        <button onclick="hideSpecificIndicator(this)" contenteditable="false" class="absolute left-4 top-3 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity hide-on-export z-10" title="Hide this row / ຊ່ອນແຖວນີ້"><i class="fas fa-eye-slash text-sm drop-shadow-sm"></i></button>
+                                    <td class="px-4 py-2 border-r pl-24 text-gray-700 relative group sticky-col inherit-bg">
+                                        <button onclick="hideSpecificIndicator(this)" contenteditable="false" class="absolute left-16 top-3 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity hide-on-export z-10" title="Hide this row / ຊ່ອນແຖວນີ້"><i class="fas fa-eye-slash text-sm drop-shadow-sm"></i></button>
                                         ${visibleIndHtml}
+                                        <div class="mt-1.5 hide-on-export">
+                                            <button onclick="addDisaggRow(this)" class="text-[10px] bg-blue-50 text-blue-600 px-2 py-0.5 rounded border border-blue-200 hover:bg-blue-100 flex items-center gap-1 transition-colors shadow-sm"><i class="fas fa-plus"></i> <span data-i18n="btn-add-disagg-row">${dict[currentLang]['btn-add-disagg-row'] || 'ແຍກຍ່ອຍ'}</span></button>
+                                        </div>
                                     </td>
                                     <td class="px-2 py-2 border-r text-center align-middle bg-gray-50 col-tk-unit">
                                         <select class="unit-type-selector text-xs bg-white border border-gray-300 rounded p-1 text-gray-700 outline-none focus:border-blue-400 cursor-pointer w-full" onchange="changeUnitType(this)">
@@ -3160,6 +3190,41 @@
                                 `;
                                 frag.appendChild(trInd);
                                 hasData = true;
+
+                                if (prev.disaggregations && prev.disaggregations.length > 0) {
+                                    prev.disaggregations.forEach(disagg => {
+                                        let yCellsHtml = '';
+                                        for(let i=0; i<trackingYearCount; i++) {
+                                            const yD = disagg.yearly[i] || {target: '', actual: ''};
+                                            const yearId = `year-${i+1}`;
+                                            yCellsHtml += `
+                                                <td class="px-4 py-1 border-r text-center editable-cell yearly-target bg-blue-50/30 format-num col-year-${yearId} text-xs" contenteditable="true" oninput="calcParent(this)" onblur="formatUnit(this)">${yD.target}</td>
+                                                <td class="px-4 py-1 border-r text-center editable-cell yearly-actual bg-green-50/30 format-num col-year-${yearId} text-xs" contenteditable="true" oninput="calcYearlyActuals(this); calcParent(this);" onblur="formatUnit(this)">${yD.actual}</td>
+                                                <td class="px-4 py-1 border-r text-sm col-notes-${yearId} col-year-${yearId} bg-gray-100 text-xs"></td>
+                                            `;
+                                        }
+
+                                        const trDisagg = document.createElement('tr');
+                                        trDisagg.className = 'disagg-row-track bg-gray-50 text-xs border-b border-gray-200 hover:bg-gray-100 transition-colors';
+                                        trDisagg.dataset.parentKey = dataKey;
+                                        trDisagg.innerHTML = `
+                                            <td class="px-4 py-1 border-r pl-32 relative group/disagg text-gray-700 sticky-col inherit-bg">
+                                                <button onclick="deleteDisaggRow(this)" class="absolute left-24 top-2 text-red-400 hover:text-red-600 opacity-0 group-hover/disagg:opacity-100 transition-opacity hide-on-export"><i class="fas fa-minus-circle"></i></button>
+                                                <div class="disagg-name editable-cell inline-block w-full text-blue-700 font-semibold" contenteditable="true" data-placeholder="ຊື່ແຍກຍ່ອຍ (e.g., ຊາຍ, ຍິງ)...">${disagg.name}</div>
+                                            </td>
+                                            <td class="px-2 py-1 border-r bg-gray-100 col-tk-unit"></td>
+                                            <td class="px-2 py-1 border-r bg-gray-100 col-tk-freq"></td>
+                                            <td class="px-4 py-1 border-r bg-gray-100 col-tk-resp"></td>
+                                            <td class="px-4 py-1 border-r text-center editable-cell track-baseline format-num col-tk-base" contenteditable="true" onblur="formatUnit(this)">${disagg.baseline}</td>
+                                            <td class="px-4 py-1 border-r text-center editable-cell track-target format-num bg-purple-50/30 col-tk-tgt" contenteditable="true" oninput="calcParent(this); calcProgress(this);" onblur="formatUnit(this)">${disagg.target}</td>
+                                            ${yCellsHtml}
+                                            <td class="px-4 py-1 border-r text-center editable-cell track-actual format-num bg-purple-50/30 col-tk-act" contenteditable="true" oninput="calcParent(this); calcProgress(this);" onblur="formatUnit(this)">${disagg.actual}</td>
+                                            <td class="px-4 py-1 border-r text-center track-progress col-tk-prog font-bold text-gray-400">${disagg.progress}</td>
+                                            <td class="px-2 py-1 border-r bg-gray-100 col-tk-stat"></td>
+                                        `;
+                                        frag.appendChild(trDisagg);
+                                    });
+                                }
                             }
                         });
                     }
@@ -3170,6 +3235,136 @@
 
             if (!hasData) {
                 trackingTbody.innerHTML = `<tr><td colspan="${colspanTotal}" class="text-center py-6 text-gray-500 italic">ບໍ່ມີຂໍ້ມູນຕົວຊີ້ວັດ ກະລຸນາເພີ່ມໃນ Logframe ກ່ອນ...</td></tr>`;
+            } else {
+                trackingTbody.querySelectorAll('.indicator-row-track').forEach(tr => {
+                    const disaggs = trackingTbody.querySelectorAll(`tr.disagg-row-track[data-parent-key="${tr.dataset.key}"]`);
+                    toggleParentEditable(tr, disaggs.length === 0);
+                });
+            }
+        }
+
+        function toggleParentEditable(parentRow, isEditable) {
+            const cells = parentRow.querySelectorAll('.track-target, .track-actual, .yearly-target, .yearly-actual');
+            cells.forEach(cell => {
+                cell.contentEditable = isEditable ? "true" : "false";
+                if(isEditable) {
+                    cell.classList.remove('bg-gray-200');
+                    if(cell.classList.contains('track-target') || cell.classList.contains('track-actual')) cell.classList.add('bg-purple-50/50');
+                    else cell.classList.add('bg-blue-50/30'); 
+                } else {
+                    cell.classList.remove('bg-purple-50/50', 'bg-blue-50/30', 'bg-green-50/30');
+                    cell.classList.add('bg-gray-200');
+                }
+            });
+        }
+
+        window.calcParent = function(element) {
+            const disaggRow = element.closest('tr.disagg-row-track');
+            if (!disaggRow) return;
+            const parentKey = disaggRow.dataset.parentKey;
+            const parentRow = document.querySelector(`tr.indicator-row-track[data-key="${parentKey}"]`);
+            if (!parentRow) return;
+
+            const disaggRows = document.querySelectorAll(`tr.disagg-row-track[data-parent-key="${parentKey}"]`);
+            const unitSelect = parentRow.querySelector('.unit-type-selector');
+            if (!unitSelect) return;
+            const unitType = unitSelect.value;
+            const isAvg = (unitType === 'pct' || unitType === 'rate');
+
+            const aggregateCol = (selector) => {
+                let sum = 0;
+                let count = 0;
+                disaggRows.forEach(row => {
+                    const cell = row.querySelector(selector);
+                    if (cell) {
+                        const val = parseFloat(cell.innerText.replace(/,/g, '')) || 0;
+                        if (!isNaN(val) && cell.innerText.trim() !== '') {
+                            sum += val;
+                            count++;
+                        }
+                    }
+                });
+                return isAvg && count > 0 ? (sum / count) : sum;
+            };
+
+            const updateCell = (selector) => {
+                const cell = parentRow.querySelector(selector);
+                if (cell) {
+                    const val = aggregateCol(selector);
+                    const count = document.querySelectorAll(`tr.disagg-row-track[data-parent-key="${parentKey}"]`).length;
+                    cell.innerText = val === 0 && !isAvg && count === 0 ? '' : val.toLocaleString('en-US', {minimumFractionDigits: 0, maximumFractionDigits: 2});
+                    formatUnit(cell);
+                }
+            };
+
+            updateCell('.track-target');
+            updateCell('.track-actual');
+
+            for(let i=1; i<=trackingYearCount; i++) {
+                updateCell(`.yearly-target.col-year-year-${i}`);
+                updateCell(`.yearly-actual.col-year-year-${i}`);
+            }
+
+            const parentTargetCell = parentRow.querySelector('.track-target');
+            if (parentTargetCell) calcProgress(parentTargetCell);
+        }
+
+        window.addDisaggRow = function(btn) {
+            const parentRow = btn.closest('tr.indicator-row-track');
+            const parentKey = parentRow.dataset.key;
+            
+            let yearlyCellsHtml = '';
+            for(let i=1; i<=trackingYearCount; i++) {
+                const yearId = `year-${i}`;
+                yearlyCellsHtml += `
+                    <td class="px-4 py-1 border-r text-center editable-cell yearly-target bg-blue-50/30 format-num col-year-${yearId} text-xs" contenteditable="true" oninput="calcParent(this)" onblur="formatUnit(this)"></td>
+                    <td class="px-4 py-1 border-r text-center editable-cell yearly-actual bg-green-50/30 format-num col-year-${yearId} text-xs" contenteditable="true" oninput="calcYearlyActuals(this); calcParent(this);" onblur="formatUnit(this)"></td>
+                    <td class="px-4 py-1 border-r text-sm col-notes-${yearId} col-year-${yearId} bg-gray-100 text-xs"></td>
+                `;
+            }
+
+            const tr = document.createElement('tr');
+            tr.className = 'disagg-row-track bg-gray-50 text-xs border-b border-gray-200 hover:bg-gray-100 transition-colors';
+            tr.dataset.parentKey = parentKey;
+            tr.innerHTML = `
+                <td class="px-4 py-1 border-r pl-32 relative group/disagg text-gray-700 sticky-col inherit-bg">
+                    <button onclick="deleteDisaggRow(this)" class="absolute left-24 top-2 text-red-400 hover:text-red-600 opacity-0 group-hover/disagg:opacity-100 transition-opacity hide-on-export"><i class="fas fa-minus-circle"></i></button>
+                    <div class="disagg-name editable-cell inline-block w-full text-blue-700 font-semibold" contenteditable="true" data-placeholder="ຊື່ແຍກຍ່ອຍ (e.g., ຊາຍ, ຍິງ)..."></div>
+                </td>
+                <td class="px-2 py-1 border-r bg-gray-100 col-tk-unit"></td>
+                <td class="px-2 py-1 border-r bg-gray-100 col-tk-freq"></td>
+                <td class="px-4 py-1 border-r bg-gray-100 col-tk-resp"></td>
+                <td class="px-4 py-1 border-r text-center editable-cell track-baseline format-num col-tk-base" contenteditable="true" onblur="formatUnit(this)"></td>
+                <td class="px-4 py-1 border-r text-center editable-cell track-target format-num bg-purple-50/30 col-tk-tgt" contenteditable="true" oninput="calcParent(this); calcProgress(this);" onblur="formatUnit(this)"></td>
+                ${yearlyCellsHtml}
+                <td class="px-4 py-1 border-r text-center editable-cell track-actual format-num bg-purple-50/30 col-tk-act" contenteditable="true" oninput="calcParent(this); calcProgress(this);" onblur="formatUnit(this)"></td>
+                <td class="px-4 py-1 border-r text-center track-progress col-tk-prog font-bold text-gray-400">-</td>
+                <td class="px-2 py-1 border-r bg-gray-100 col-tk-stat"></td>
+            `;
+
+            const existingDisaggs = document.querySelectorAll(`tr.disagg-row-track[data-parent-key="${parentKey}"]`);
+            let insertAfterNode = parentRow;
+            if (existingDisaggs.length > 0) {
+                insertAfterNode = existingDisaggs[existingDisaggs.length - 1];
+            }
+            insertAfterNode.parentNode.insertBefore(tr, insertAfterNode.nextSibling);
+
+            toggleParentEditable(parentRow, false);
+        }
+
+        window.deleteDisaggRow = function(btn) {
+            const tr = btn.closest('tr');
+            const parentKey = tr.dataset.parentKey;
+            tr.remove();
+            
+            const parentRow = document.querySelector(`tr.indicator-row-track[data-key="${parentKey}"]`);
+            if (parentRow) {
+                const remainingDisaggs = document.querySelectorAll(`tr.disagg-row-track[data-parent-key="${parentKey}"]`);
+                if (remainingDisaggs.length === 0) {
+                    toggleParentEditable(parentRow, true);
+                } else {
+                    calcParent(remainingDisaggs[0].querySelector('.track-target'));
+                }
             }
         }
 
@@ -3191,15 +3386,15 @@
                     let percent = Math.round((actual / target) * 100);
                     progressCell.innerText = percent + '%';
                     
-                    if (percent >= 100) progressCell.className = 'px-4 py-2 border-r text-center font-bold text-green-600 track-progress';
-                    else if (percent >= 50) progressCell.className = 'px-4 py-2 border-r text-center font-bold text-blue-600 track-progress';
-                    else progressCell.className = 'px-4 py-2 border-r text-center font-bold text-orange-500 track-progress';
+                    if (percent >= 100) progressCell.className = 'px-4 py-2 border-r text-center font-bold text-green-600 track-progress col-tk-prog';
+                    else if (percent >= 50) progressCell.className = 'px-4 py-2 border-r text-center font-bold text-blue-600 track-progress col-tk-prog';
+                    else progressCell.className = 'px-4 py-2 border-r text-center font-bold text-orange-500 track-progress col-tk-prog';
                 } else {
                     progressCell.innerText = '0%';
                 }
             } else {
                 progressCell.innerText = '-';
-                progressCell.className = 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress';
+                progressCell.className = 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress col-tk-prog';
             }
         }
 
@@ -3273,6 +3468,51 @@
             document.getElementById('btn-unhide-years').classList.add('hidden');
         }
 
+        // --- DISAGGREGATION MANAGEMENT FUNCTIONS ---
+        function renderDisaggSettings() {
+            const container = document.getElementById('disagg-container');
+            if(!container) return;
+            container.innerHTML = '';
+            
+            disaggData.forEach((item, index) => {
+                container.innerHTML += `
+                    <div class="grid grid-cols-12 gap-4 items-start bg-white p-3 border border-gray-200 rounded-lg shadow-sm relative group/disagg">
+                        <button onclick="removeDisaggCategory(${index})" class="absolute -top-2 -right-2 bg-red-100 text-red-600 rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover/disagg:opacity-100 transition-opacity hover:bg-red-500 hover:text-white border border-red-200 hide-on-export"><i class="fas fa-times text-[10px]"></i></button>
+                        
+                        <div class="col-span-4 space-y-2">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider" data-i18n="lbl-cat-name">${dict[currentLang]['lbl-cat-name'] || 'Category Name'}</label>
+                            <input type="text" class="border border-gray-300 rounded p-1.5 w-full text-sm outline-none focus:border-blue-500 bg-gray-50" placeholder="English (e.g. Gender)" value="${item.nameEn}" oninput="updateDisaggData(${index}, 'nameEn', this.value)">
+                            <input type="text" class="border border-gray-300 rounded p-1.5 w-full text-sm outline-none focus:border-blue-500 bg-gray-50" placeholder="ລາວ (ຕົວຢ່າງ: ເພດ)" value="${item.nameLo}" oninput="updateDisaggData(${index}, 'nameLo', this.value)">
+                        </div>
+                        <div class="col-span-8 space-y-2">
+                            <label class="text-[10px] font-bold text-gray-500 uppercase tracking-wider" data-i18n="lbl-cat-options">${dict[currentLang]['lbl-cat-options'] || 'Options (Comma separated)'}</label>
+                            <input type="text" class="border border-gray-300 rounded p-1.5 w-full text-sm outline-none focus:border-blue-500" placeholder="Male, Female, Other" value="${item.optionsEn}" oninput="updateDisaggData(${index}, 'optionsEn', this.value)">
+                            <input type="text" class="border border-gray-300 rounded p-1.5 w-full text-sm outline-none focus:border-blue-500" placeholder="ຊາຍ, ຍິງ, ອື່ນໆ" value="${item.optionsLo}" oninput="updateDisaggData(${index}, 'optionsLo', this.value)">
+                        </div>
+                    </div>
+                `;
+            });
+            // Update labels based on current language
+            document.querySelectorAll('#disagg-container [data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (dict[currentLang][key]) el.innerText = dict[currentLang][key];
+            });
+        }
+
+        function addDisaggCategory() {
+            disaggData.push({ id: 'id-' + Date.now(), nameEn: '', nameLo: '', optionsEn: '', optionsLo: '' });
+            renderDisaggSettings();
+        }
+
+        function removeDisaggCategory(index) {
+            disaggData.splice(index, 1);
+            renderDisaggSettings();
+        }
+
+        function updateDisaggData(index, field, value) {
+            disaggData[index][field] = value;
+        }
+
         // Global Bindings for HTML onclick listeners
         window.setLanguage = setLanguage;
         window.saveAsHTML = saveAsHTML;
@@ -3325,6 +3565,11 @@
         window.addRiskRow = addRiskRow;
         window.deleteRiskRow = deleteRiskRow;
         window.updateRiskColor = updateRiskColor;
+        window.renderDisaggSettings = renderDisaggSettings;
+        window.addDisaggCategory = addDisaggCategory;
+        window.removeDisaggCategory = removeDisaggCategory;
+        window.updateDisaggData = updateDisaggData;
+        window.toggleParentEditable = toggleParentEditable;
 
         // Initialize App
         document.addEventListener('DOMContentLoaded', () => {
@@ -3346,6 +3591,8 @@
 
             // Init risk colors
             document.querySelectorAll('.risk-level-select').forEach(select => updateRiskColor(select));
+
+            renderDisaggSettings(); // ແຕ້ມກ່ອງ Disaggregation ຕອນໂຫຼດແອັບ
 
             switchTab('project');
             setLanguage('lo');
