@@ -1561,13 +1561,21 @@
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = url; a.download = 'Logframe_Data.json'; a.click(); URL.revokeObjectURL(url);
+            a.href = url; 
+            a.download = (document.getElementById('proj-code')?.value || 'Logframe_Data') + '.json'; 
+            a.click(); 
+            URL.revokeObjectURL(url);
+            showToast("ບັນທຶກສຳເລັດແລ້ວ! (Saved successfully)", "success");
         }
 
         async function saveToLocalFile() {
             const jsonString = getProjectDataAsJSON();
+            // ກວດສອບວ່າລັນໃນ Electron ຫຼື ບໍ່
+            const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
+            
             try {
-                if (window.showSaveFilePicker) {
+                // ຖ້າເປັນ Web Browser ປົກກະຕິ ໃຫ້ໃຊ້ File Picker
+                if (window.showSaveFilePicker && !isElectron) {
                     const handle = await window.showSaveFilePicker({
                         suggestedName: (document.getElementById('proj-code')?.value || 'Logframe') + '.json',
                         types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
@@ -1577,16 +1585,22 @@
                     await writable.close();
                     showToast("ບັນທຶກລົງເຄື່ອງສຳເລັດແລ້ວ! (Saved successfully)", "success");
                 } else {
-                    saveAsJSON(); // Fallback for older browsers
+                    // ຖ້າເປັນ Electron ຫຼື Browser ທີ່ບໍ່ຮອງຮັບ ໃຫ້ໃຊ້ການດາວໂຫຼດແບບທຳມະດາ
+                    saveAsJSON(); 
                 }
             } catch (err) {
-                if (err.name !== 'AbortError') showToast("ເກີດຂໍ້ຜິດພາດໃນການບັນທຶກ (Save failed)", "error");
+                // ຖ້າ User ບໍ່ໄດ້ກົດ Cancel (AbortError) ແຕ່ເກີດ Error ອື່ນ ໃຫ້ລອງໃຊ້ແບບທຳມະດາ
+                if (err.name !== 'AbortError') {
+                    saveAsJSON();
+                }
             }
         }
 
         async function openLocalFile() {
+            const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
+            
             try {
-                if (window.showOpenFilePicker) {
+                if (window.showOpenFilePicker && !isElectron) {
                     const [fileHandle] = await window.showOpenFilePicker({
                         types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
                     });
@@ -1594,10 +1608,12 @@
                     const contents = await file.text();
                     processImportedData(contents);
                 } else {
-                    document.getElementById('importJsonInput').click(); // Fallback for older browsers
+                    document.getElementById('importJsonInput').click(); // Fallback ສຳລັບ Electron
                 }
             } catch (err) {
-                if (err.name !== 'AbortError') showToast("ເກີດຂໍ້ຜິດພາດໃນການເປີດໄຟລ໌ (Open failed)", "error");
+                if (err.name !== 'AbortError') {
+                    document.getElementById('importJsonInput').click();
+                }
             }
         }
 
