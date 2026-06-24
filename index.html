@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Logframe Application</title>
+    <title>LogframePro</title>
+    <!-- Favicon / Desktop Icon (Embedded SVG) -->
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Crect x='10' y='3' width='4' height='4' rx='1' fill='%231D4ED8'/%3E%3Crect x='3' y='11' width='4' height='4' rx='1' fill='%233B82F6'/%3E%3Crect x='10' y='11' width='4' height='4' rx='1' fill='%233B82F6'/%3E%3Crect x='17' y='11' width='4' height='4' rx='1' fill='%233B82F6'/%3E%3Cpath d='M12 7v2' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M5 9h14' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M5 9v2' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M12 9v2' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M19 9v2' stroke='%2394A3B8' stroke-width='2' stroke-linecap='round'/%3E%3Cpath d='M14 18l2 2 5-5' stroke='%23F59E0B' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -97,15 +100,48 @@
         .export-snapshot .planning-table-container, .export-snapshot .table-container { overflow: visible !important; }
         .export-snapshot input, .export-snapshot select { display: none !important; }
         .export-static-value { display: inline-block; width: 100%; word-wrap: break-word; }
+
+        /* Sticky Columns (Freeze Panes) */
+        .sticky-col {
+            position: sticky !important;
+            left: 0;
+            z-index: 15;
+            box-shadow: 2px 0 5px -1px rgba(0,0,0,0.2);
+        }
+        .planning-table th.sticky-col, .tracking-table th.sticky-col {
+            z-index: 30 !important;
+        }
+        .inherit-bg {
+            background-color: inherit;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body class="h-screen flex flex-col overflow-hidden lang-lo show-levels-4">
 
     <div class="bg-blue-50 border-b border-blue-200 p-2 flex flex-col gap-2 shrink-0 hide-on-export">
-        <div class="flex justify-between items-center mb-1 px-2">
-            <div class="flex text-xs text-gray-600 gap-4">
-                <span class="cursor-pointer hover:text-blue-600 font-medium text-blue-800 border-b-2 border-blue-600 pb-1" data-i18n="menu-project">Project</span>
+        <div class="flex justify-between items-center mb-1 px-2 mt-1">
+            <div class="flex items-center gap-3">
+                <!-- LogframePro Logo -->
+                <div class="flex items-center gap-1.5 cursor-default select-none border-r border-blue-200 pr-4 mr-2">
+                    <svg class="w-6 h-6 drop-shadow-sm" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="10" y="3" width="4" height="4" rx="1" fill="#1D4ED8" />
+                        <rect x="3" y="11" width="4" height="4" rx="1" fill="#3B82F6" />
+                        <rect x="10" y="11" width="4" height="4" rx="1" fill="#3B82F6" />
+                        <rect x="17" y="11" width="4" height="4" rx="1" fill="#3B82F6" />
+                        <path d="M12 7V9" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M5 9H19" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M5 9V11" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M12 9V11" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M19 9V11" stroke="#94A3B8" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M14 18l2 2 5-5" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span class="text-lg font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-800 to-blue-500 tracking-tight drop-shadow-sm" style="font-family: Arial, sans-serif;">Logframe<span class="text-orange-500">Pro</span></span>
+                </div>
+                
+                <div class="flex text-xs text-gray-600 gap-4">
+                    <span class="cursor-pointer hover:text-blue-600 font-medium text-blue-800 border-b-2 border-blue-600 pb-1" data-i18n="menu-project">Project</span>
+                </div>
             </div>
             <div class="flex bg-white rounded border border-gray-300 overflow-hidden text-xs font-bold shadow-sm">
                 <button onclick="setLanguage('en')" id="lang-en" class="px-3 py-1 hover:bg-gray-100 text-gray-500 transition-colors">EN</button>
@@ -151,15 +187,15 @@
                 <button onclick="openLocalFile()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ເປີດໄຟລ໌ໂຄງການຈາກເຄື່ອງ (Open Project)">
                     <i class="fas fa-folder-open text-lg text-yellow-600 mb-1"></i> <span data-i18n="btn-open">Open</span>
                 </button>
+                <button onclick="saveProject()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ບັນທຶກທັບໄຟລ໌ເດີມ (Save) [Ctrl+S]">
+                    <i class="fas fa-save text-lg text-green-600 mb-1"></i> <span data-i18n="btn-save">Save</span>
+                </button>
                 <button onclick="downloadProject()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ດາວໂຫຼດໂຄງການລົງເຄື່ອງ (Download Project)">
                     <i class="fas fa-download text-lg text-blue-600 mb-1"></i> <span data-i18n="btn-download">Download</span>
                 </button>
                 <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importJSON(event)">
-                <button onclick="saveToCache()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ບັນທຶກຊົ່ວຄາວໃນແຄສ (Cloud/Firestore) [Ctrl+Shift+V ຫຼື Ctrl+S]">
-                    <i class="fas fa-cloud-upload-alt text-lg text-emerald-600 mb-1"></i> <span data-i18n="btn-quick-save">Quick Save</span>
-                </button>
-                <button onclick="loadFromCache(true)" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ດຶງຂໍ້ມູນຄືນຈາກແຄສ">
-                    <i class="fas fa-cloud-download-alt text-lg text-sky-600 mb-1"></i> <span data-i18n="btn-restore-cache">Restore</span>
+                <button onclick="saveToCache()" class="p-1 hover:bg-gray-100 rounded text-gray-700 flex flex-col items-center text-[10px]" title="ບັນທຶກຊົ່ວຄາວໃນແຄສ (Cloud/Firestore)">
+                    <i class="fas fa-cloud-upload-alt text-lg text-emerald-600 mb-1"></i> <span data-i18n="btn-quick-save">Cloud</span>
                 </button>
             </div>
 
@@ -198,17 +234,17 @@
                 <div class="grid grid-cols-2 gap-4">
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="lbl-proj-title">Project Title</label>
-                        <input id="proj-title-en" type="text" class="en-text mb-2 w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" value="Women Empowerment Initiative">
-                        <input id="proj-title-lo" type="text" class="lao-text w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" value="ໂຄງການສົ່ງເສີມຄວາມເຂັ້ມແຂງແມ່ຍິງ">
+                        <input id="proj-title-en" type="text" class="en-text mb-2 w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" value="">
+                        <input id="proj-title-lo" type="text" class="lao-text w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" value="">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="lbl-proj-code">Project Code</label>
-                        <input id="proj-code" type="text" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" value="WEI-2026-01">
+                        <input id="proj-code" type="text" class="w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" value="">
                     </div>
                     <div class="col-span-2">
                         <label class="block text-sm font-medium text-gray-700 mb-1" data-i18n="lbl-proj-desc">Description</label>
-                        <textarea id="proj-desc-en" class="en-text mb-2 w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" rows="3">A comprehensive program aimed at achieving gender equality and empowering women and girls across all spheres of life.</textarea>
-                        <textarea id="proj-desc-lo" class="lao-text w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" rows="3">ໂຄງການຮອບດ້ານທີ່ແນໃສ່ການບັນລຸຄວາມສະເໝີພາບຍິງ-ຊາຍ ແລະ ສົ່ງເສີມຄວາມເຂັ້ມແຂງໃຫ້ແກ່ແມ່ຍິງ ແລະ ເດັກຍິງໃນທຸກຂົງເຂດ</textarea>
+                        <textarea id="proj-desc-en" class="en-text mb-2 w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" rows="3"></textarea>
+                        <textarea id="proj-desc-lo" class="lao-text w-full border-gray-300 rounded-md shadow-sm p-2 border focus:ring-blue-500" rows="3"></textarea>
                     </div>
                 </div>
             </div>
@@ -361,30 +397,6 @@
                                 <button onclick="hideColumn('col-lf-asm')" class="absolute top-2 right-2 text-gray-200 hover:text-white opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-sm"></i></button>
                             </th>
                         </tr>
-                        <tr class="sync-row" data-prefix="1" data-ref="goal-1">
-                            <td class="editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('goal', this)" onmousedown="event.stopPropagation();" class="bg-green-500 hover:bg-green-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Row Below (ເພີ່ມແຖວລຸ່ມ)"><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                    <button onclick="filterByGoal(this)" onmousedown="event.stopPropagation();" class="filter-btn bg-yellow-500 hover:bg-yellow-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Filter (ກັ່ນຕອງ)"><i class="fas fa-filter text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete Row (ລຶບແຖວ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">Goal 1:</span> Achieve gender equality and empower all women and girls</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">ເປົ້າໝາຍ 1:</span> ບັນລຸຄວາມສະເໝີພາບຍິງ-ຊາຍ ແລະ ສົ່ງເສີມຄວາມເຂັ້ມແຂງໃຫ້ແມ່ຍິງ ແລະ ເດັກຍິງທຸກຄົນ</div>
-                            </td>
-                            <td class="bg-gray-100 relative group align-top has-list p-0 col-lf-ind">
-                                <div class="list-container"><div class="list-item relative group/item" contenteditable="true"><button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button><div class="en-text"></div><div class="lao-text"></div></div></div>
-                                <button onclick="addItem(this, true)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                            <td class="bg-gray-100 relative group align-top has-list p-0 col-lf-ver">
-                                <div class="list-container"><div class="list-item relative group/item" contenteditable="true"><button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button><div class="en-text"></div><div class="lao-text"></div></div></div>
-                                <button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                            <td class="bg-gray-100 relative group align-top has-list p-0 col-lf-asm">
-                                <div class="list-container"><div class="list-item relative group/item" contenteditable="true"><button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button><div class="en-text"></div><div class="lao-text"></div></div></div>
-                                <button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                        </tr>
                         <tr><td colspan="4" class="h-4 !p-0 !border-0 !bg-gray-200"></td></tr>
                     </tbody>
 
@@ -407,47 +419,6 @@
                                 <span data-i18n="th-assumptions">Assumptions</span>
                                 <button onclick="hideColumn('col-lf-asm')" class="absolute top-2 right-2 text-gray-200 hover:text-white opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-sm"></i></button>
                             </th>
-                        </tr>
-                        <tr class="blue-ribbon" data-parent-ref="goal-1">
-                            <td colspan="4" class="!text-left editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('purpose', this)" onmousedown="event.stopPropagation();" class="bg-teal-500 hover:bg-teal-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Inside (ເພີ່ມລາຍການຍ່ອຍ)"><i class="fas fa-level-down-alt text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete (ລຶບ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">Goal 1:</span> Achieve gender equality and empower all women and girls</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">ເປົ້າໝາຍ 1:</span> ບັນລຸຄວາມສະເໝີພາບຍິງ-ຊາຍ ແລະ ສົ່ງເສີມຄວາມເຂັ້ມແຂງໃຫ້ແມ່ຍິງ ແລະ ເດັກຍິງທຸກຄົນ</div>
-                            </td>
-                        </tr>
-                        <tr class="purpose-row sync-row" data-prefix="1.1" data-ref="purp-1-1">
-                            <td class="editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('purpose', this)" onmousedown="event.stopPropagation();" class="bg-green-500 hover:bg-green-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Row Below (ເພີ່ມແຖວລຸ່ມ)"><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                    <button onclick="filterByGoal(this)" onmousedown="event.stopPropagation();" class="filter-btn bg-yellow-500 hover:bg-yellow-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Filter (ກັ່ນຕອງ)"><i class="fas fa-filter text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete Row (ລຶບແຖວ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">1.1</span> End all forms of discrimination against all women and girls</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">1.1</span> ຍຸຕິທຸກຮູບແບບການຈຳແນກຕໍ່ແມ່ຍິງ ແລະ ເດັກຍິງທຸກຄົນ</div>
-                            </td>
-                            <td class="bg-white relative group align-top has-list p-0 col-lf-ind">
-                                <div class="list-container">
-                                    <div class="list-item relative group/item" contenteditable="true">
-                                        <button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button>
-                                        <div class="en-text"><span class="font-bold mr-1 text-blue-600 ind-prefix" contenteditable="false">1.1.1</span> Legal frameworks in place to promote equality</div>
-                                        <div class="lao-text"><span class="font-bold mr-1 text-blue-600 ind-prefix" contenteditable="false">1.1.1</span> ມີກອບກົດໝາຍເພື່ອສົ່ງເສີມຄວາມສະເໝີພາບ</div>
-                                    </div>
-                                </div>
-                                <button onclick="addItem(this, true)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                            <td class="bg-white relative group align-top has-list p-0 col-lf-ver">
-                                <div class="list-container"><div class="list-item relative group/item" contenteditable="true"><button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button><div class="en-text"></div><div class="lao-text"></div></div></div>
-                                <button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                            <td class="bg-white relative group align-top has-list p-0 col-lf-asm">
-                                <div class="list-container"><div class="list-item relative group/item" contenteditable="true"><button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button><div class="en-text"></div><div class="lao-text"></div></div></div>
-                                <button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
                         </tr>
                         <tr><td colspan="4" class="h-4 !p-0 !border-0 !bg-gray-200"></td></tr>
                     </tbody>
@@ -472,59 +443,6 @@
                                 <button onclick="hideColumn('col-lf-asm')" class="absolute top-2 right-2 text-gray-200 hover:text-white opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-sm"></i></button>
                             </th>
                         </tr>
-                        <tr class="blue-ribbon" data-parent-ref="purp-1-1">
-                            <td colspan="4" class="!text-left editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('output', this)" onmousedown="event.stopPropagation();" class="level-3-section bg-teal-500 hover:bg-teal-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Inside (ເພີ່ມລາຍການຍ່ອຍ)"><i class="fas fa-level-down-alt text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete (ລຶບ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">1.1</span> End all forms of discrimination against all women and girls</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">1.1</span> ຍຸຕິທຸກຮູບແບບການຈຳແນກຕໍ່ແມ່ຍິງ ແລະ ເດັກຍິງທຸກຄົນ</div>
-                            </td>
-                        </tr>
-                        <tr class="output-row sync-row" data-prefix="1.1.1" data-ref="out-1-1-1">
-                            <td class="!bg-white editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('output', this)" onmousedown="event.stopPropagation();" class="bg-green-500 hover:bg-green-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Row Below (ເພີ່ມແຖວລຸ່ມ)"><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                    <button onclick="filterByGoal(this)" onmousedown="event.stopPropagation();" class="filter-btn bg-yellow-500 hover:bg-yellow-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Filter (ກັ່ນຕອງ)"><i class="fas fa-filter text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete Row (ລຶບແຖວ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">Output 1.1.1:</span> Legal reviews conducted.</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">ຜົນໄດ້ຮັບ 1.1.1:</span> ການທົບທວນກົດໝາຍສຳເລັດແລ້ວ.</div>
-                            </td>
-                            <td class="!bg-white relative group align-top has-list p-0 col-lf-ind">
-                                <div class="list-container">
-                                    <div class="list-item relative group/item" contenteditable="true">
-                                        <button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button>
-                                        <div class="en-text"><span class="font-bold mr-1 text-blue-600 ind-prefix" contenteditable="false">1.1.1.1</span> Number of reviews completed.</div>
-                                        <div class="lao-text"><span class="font-bold mr-1 text-blue-600 ind-prefix" contenteditable="false">1.1.1.1</span> ຈຳນວນການທົບທວນທີ່ສຳເລັດ.</div>
-                                    </div>
-                                </div>
-                                <button onclick="addItem(this, true)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                            <td class="!bg-white relative group align-top has-list p-0 col-lf-ver">
-                                <div class="list-container">
-                                    <div class="list-item relative group/item" contenteditable="true">
-                                        <button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button>
-                                        <div class="en-text">Project Reports</div>
-                                        <div class="lao-text">ບົດລາຍງານໂຄງການ</div>
-                                    </div>
-                                </div>
-                                <button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                            <td class="!bg-white relative group align-top has-list p-0 col-lf-asm">
-                                <div class="list-container">
-                                    <div class="list-item relative group/item" contenteditable="true">
-                                        <button onclick="deleteListItem(this)" onmousedown="event.stopPropagation();" contenteditable="false" class="absolute top-1 right-1 text-red-400 hover:bg-red-500 hover:text-white w-4 h-4 rounded flex items-center justify-center opacity-0 group-hover/item:opacity-100 transition-colors z-10 cursor-pointer hide-on-export" title="Delete"><i class="fas fa-times text-[10px]"></i></button>
-                                        <div class="en-text">Government willingness.</div>
-                                        <div class="lao-text">ຄວາມເຕັມໃຈຂອງລັດຖະບານ</div>
-                                    </div>
-                                </div>
-                                <button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>
-                            </td>
-                        </tr>
                         <tr><td colspan="4" class="h-4 !p-0 !border-0 !bg-gray-200"></td></tr>
                     </tbody>
 
@@ -547,34 +465,6 @@
                                 <span data-i18n="th-assumptions">Assumptions</span>
                                 <button onclick="hideColumn('col-lf-asm')" class="absolute top-2 right-2 text-gray-200 hover:text-white opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-sm"></i></button>
                             </th>
-                        </tr>
-                        <tr class="blue-ribbon" data-parent-ref="out-1-1-1">
-                            <td colspan="4" class="!text-left editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('activity', this)" onmousedown="event.stopPropagation();" class="level-4-section bg-teal-500 hover:bg-teal-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Inside (ເພີ່ມລາຍການຍ່ອຍ)"><i class="fas fa-level-down-alt text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete (ລຶບ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">Output 1.1.1:</span> Legal reviews conducted.</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">ຜົນໄດ້ຮັບ 1.1.1:</span> ການທົບທວນກົດໝາຍສຳເລັດແລ້ວ.</div>
-                            </td>
-                        </tr>
-                        <tr class="activity-row" data-prefix="1.1.1.1" data-ref="act-1-1-1-1">
-                            <td class="!bg-white editable-cell relative group" contenteditable="true">
-                                <div class="absolute top-1 right-1 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity z-10 hide-on-export" contenteditable="false">
-                                    <button onclick="hideRow(this)" onmousedown="event.stopPropagation();" class="bg-gray-400 hover:bg-gray-500 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Hide Row (ຊ່ອນແຖວ)"><i class="fas fa-eye-slash text-[10px]"></i></button>
-                                    <button onclick="addLogframeRow('activity', this)" onmousedown="event.stopPropagation();" class="bg-green-500 hover:bg-green-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Add Row Below (ເພີ່ມແຖວລຸ່ມ)"><i class="fas fa-arrow-down text-[10px]"></i></button>
-                                    <button onclick="deleteLogframeRow(this)" onmousedown="event.stopPropagation();" class="bg-red-500 hover:bg-red-600 text-white px-1.5 h-5 rounded flex items-center justify-center shadow cursor-pointer" title="Delete Row (ລຶບແຖວ)"><i class="fas fa-trash-alt text-[10px]"></i></button>
-                                </div>
-                                <div class="en-text"><span class="font-bold text-blue-600 mr-1">Act 1.1.1.1:</span> Hire legal consultants</div>
-                                <div class="lao-text"><span class="font-bold text-blue-600 mr-1">ກິດຈະກຳ 1.1.1.1:</span> ຈ້າງທີ່ປຶກສາດ້ານກົດໝາຍ</div>
-                            </td>
-                            <td class="!bg-white editable-cell col-bg-res" contenteditable="true">
-                                <div class="en-text">Legal Consultants (4 Months)</div>
-                                <div class="lao-text">ທີ່ປຶກສາກົດໝາຍ (4 ເດືອນ)</div>
-                            </td>
-                            <td class="!bg-white editable-cell col-bg-cost" contenteditable="true">10,000.00 USD</td>
-                            <td class="!bg-white editable-cell col-lf-asm" contenteditable="true">Qualified consultants are available.</td>
                         </tr>
                     </tbody>
                 </table>
@@ -647,9 +537,9 @@
             </div>
             <div class="table-container flex-1 overflow-auto bg-white border rounded-lg shadow-sm">
                 <table class="min-w-full text-sm text-left budget-table">
-                    <thead class="bg-green-50 border-b">
-                        <tr>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/3" data-i18n="th-activities">Activities</th>
+                    <thead class="border-b">
+                        <tr class="bg-green-50">
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/3 sticky-col inherit-bg" data-i18n="th-activities">Activities</th>
                             <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/4 col-bg-res group/th relative">
                                 <span data-i18n="th-resources">Resources</span>
                                 <button onclick="hideColumn('col-bg-res')" class="absolute top-2 right-2 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-xs drop-shadow-sm"></i></button>
@@ -701,22 +591,6 @@
                         </tr>
                     </thead>
                     <tbody id="risk-tbody" class="divide-y">
-                        <tr class="hover:bg-gray-50 group/row">
-                            <td class="px-4 py-2 border-r text-center font-medium row-num">1</td>
-                            <td class="px-4 py-2 border-r editable-cell" contenteditable="true"><div class="en-text">Example Risk</div><div class="lao-text">ຄວາມສ່ຽງຕົວຢ່າງ</div></td>
-                            <td class="px-4 py-2 border-r text-center align-middle">
-                                <select class="text-xs border border-orange-300 bg-orange-50 text-orange-700 font-bold rounded p-1 w-full outline-none cursor-pointer risk-level-select" onchange="updateRiskColor(this)">
-                                    <option value="high" data-i18n="opt-high">High</option>
-                                    <option value="medium" data-i18n="opt-medium" selected>Medium</option>
-                                    <option value="low" data-i18n="opt-low">Low</option>
-                                </select>
-                            </td>
-                            <td class="px-4 py-2 border-r editable-cell" contenteditable="true"><div class="en-text">Mitigation plan...</div><div class="lao-text">ແຜນຮັບມື...</div></td>
-                            <td class="px-4 py-2 border-r editable-cell" contenteditable="true">PM</td>
-                            <td class="px-2 py-2 text-center hide-on-export">
-                                <button onclick="deleteRiskRow(this)" class="text-red-400 hover:text-red-600 opacity-0 group-hover/row:opacity-100 transition-opacity"><i class="fas fa-trash-alt"></i></button>
-                            </td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -728,6 +602,9 @@
                 <div class="flex items-center gap-4">
                     <h2 class="text-2xl font-bold text-gray-800" data-i18n="tab-tracking">Indicators Tracking</h2>
                     <div class="flex gap-2">
+                        <button id="btn-unhide-tk-cols" onclick="unhideColumns('tk')" class="hidden bg-yellow-50 text-yellow-600 border border-yellow-200 px-3 py-1.5 rounded hover:bg-yellow-100 transition-colors shadow-sm text-sm font-medium hide-on-export">
+                            <i class="fas fa-columns mr-1"></i> <span data-i18n="btn-show-cols">Show Columns</span>
+                        </button>
                         <button onclick="unhideAllYears()" id="btn-unhide-years" class="hidden bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded hover:bg-blue-100 transition-colors shadow-sm text-sm font-medium hide-on-export">
                             <i class="fas fa-calendar-check mr-1"></i> <span data-i18n="btn-show-years">Show Hidden Years</span>
                         </button>
@@ -753,15 +630,41 @@
             </div>
             <div class="table-container flex-1 overflow-auto bg-white border rounded-lg shadow-sm">
                 <table class="min-w-full text-sm text-left tracking-table">
-                    <thead class="bg-purple-50 border-b">
-                        <tr>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/3 min-w-[250px]" data-i18n="th-hierarchy">Hierarchy / Indicator</th>
-                            <th class="px-2 py-3 font-semibold text-gray-700 border-r w-16 text-center" data-i18n="th-unit">Unit</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center" data-i18n="th-baseline">Baseline</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center th-target-overall bg-purple-100" data-i18n="th-target-overall">Overall Target</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center th-actual-overall bg-purple-100" data-i18n="th-actual-overall">Overall Actual</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center" data-i18n="th-progress">Progress</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 w-48" data-i18n="th-status">Status / Notes</th>
+                    <thead class="border-b">
+                        <tr class="bg-purple-50">
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/3 min-w-[250px] sticky-col inherit-bg" data-i18n="th-hierarchy">Hierarchy / Indicator</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r w-16 text-center group/th relative col-tk-unit">
+                                <span data-i18n="th-unit">Unit</span>
+                                <button onclick="hideColumn('col-tk-unit')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r w-24 text-center group/th relative col-tk-freq">
+                                <span data-i18n="th-frequency">Frequency</span>
+                                <button onclick="hideColumn('col-tk-freq')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center group/th relative col-tk-resp">
+                                <span data-i18n="th-tracking-resp">Responsible</span>
+                                <button onclick="hideColumn('col-tk-resp')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center group/th relative col-tk-base">
+                                <span data-i18n="th-baseline">Baseline</span>
+                                <button onclick="hideColumn('col-tk-base')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center th-target-overall bg-purple-100 group/th relative col-tk-tgt">
+                                <span data-i18n="th-target-overall">Overall Target</span>
+                                <button onclick="hideColumn('col-tk-tgt')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center th-actual-overall bg-purple-100 group/th relative col-tk-act">
+                                <span data-i18n="th-actual-overall">Overall Actual</span>
+                                <button onclick="hideColumn('col-tk-act')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-24 text-center group/th relative col-tk-prog">
+                                <span data-i18n="th-progress">Progress</span>
+                                <button onclick="hideColumn('col-tk-prog')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 w-48 group/th relative col-tk-stat">
+                                <span data-i18n="th-status">Status / Notes</span>
+                                <button onclick="hideColumn('col-tk-stat')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                            </th>
                         </tr>
                     </thead>
                     <tbody id="tracking-tbody" class="divide-y"></tbody>
@@ -841,7 +744,6 @@
         </div>
     </div>
 
-    <!-- Firebase + App Script Module -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -855,7 +757,7 @@
                 'menu-project': 'Project',
                 'tab-project': 'Project', 'tab-logframe': 'Logframe', 'tab-tracking': 'Tracking', 'tab-planning': 'Planning', 'tab-budget': 'Budget', 'tab-risk': 'Risk Mgt', 'tab-settings': 'Settings', 'tab-dashboard': 'Dashboard',
                 'btn-save-html': 'Save HTML', 'btn-json': 'JSON', 'btn-import': 'Import', 'btn-excel': 'Excel', 'btn-word': 'Word',
-                'btn-open': 'Open File', 'btn-download': 'Download',
+                'btn-open': 'Open File', 'btn-download': 'Download', 'btn-save': 'Save',
                 'btn-add': 'Add', 'btn-sync': 'Sync from Logframe', 'btn-add-year': 'Add Year', 'btn-sync-dash': 'Refresh Data',
                 'btn-add-goal': 'Add Goal', 'btn-add-purpose': 'Add Purpose', 'btn-add-output': 'Add Output', 'btn-add-activity': 'Add Activity', 'btn-add-risk': 'Add Risk Row',
                 'btn-quick-save': 'Quick Save', 'btn-restore-cache': 'Restore',
@@ -873,6 +775,8 @@
                 'th-target-small': 'Target', 'th-actual-small': 'Actual',
                 'th-yearly-notes': 'Yearly Notes',
                 'th-unit': 'Unit',
+                'th-frequency': 'Frequency', 'th-tracking-resp': 'Responsible',
+                'opt-quarterly': 'Quarterly', 'opt-yearly': 'Yearly', 'opt-end': 'End of Project',
                 'lbl-view-mode': 'View:',
                 'opt-monthly': 'Monthly',
                 'opt-weekly': 'Weekly',
@@ -907,7 +811,7 @@
                 'menu-project': 'ໂຄງການ',
                 'tab-project': 'ໂຄງການ', 'tab-logframe': 'Logframe', 'tab-tracking': 'ຕິດຕາມຕົວຊີ້ວັດ', 'tab-planning': 'ແຜນວຽກ', 'tab-budget': 'ງົບປະມານ', 'tab-risk': 'ຈັດການຄວາມສ່ຽງ', 'tab-settings': 'ຕັ້ງຄ່າ', 'tab-dashboard': 'ແຜງຄວບຄຸມ',
                 'btn-save-html': 'ບັນທຶກ HTML', 'btn-json': 'JSON', 'btn-import': 'ນຳເຂົ້າ', 'btn-excel': 'Excel', 'btn-word': 'Word',
-                'btn-open': 'ເປີດໄຟລ໌', 'btn-download': 'ດາວໂຫຼດ',
+                'btn-open': 'ເປີດໄຟລ໌', 'btn-download': 'ດາວໂຫຼດ', 'btn-save': 'ບັນທຶກ',
                 'btn-add': 'ເພີ່ມ', 'btn-sync': 'ດຶງຂໍ້ມູນຈາກ Logframe', 'btn-add-year': 'ເພີ່ມປີ', 'btn-sync-dash': 'ອັບເດດຂໍ້ມູນ',
                 'btn-add-goal': 'ເພີ່ມເປົ້າໝາຍ', 'btn-add-purpose': 'ເພີ່ມຈຸດປະສົງ', 'btn-add-output': 'ເພີ່ມຜົນໄດ້ຮັບ', 'btn-add-activity': 'ເພີ່ມກິດຈະກຳ', 'btn-add-risk': 'ເພີ່ມຄວາມສ່ຽງ',
                 'btn-quick-save': 'ບັນທຶກດ່ວນ', 'btn-restore-cache': 'ດຶງຂໍ້ມູນຄືນ',
@@ -925,6 +829,8 @@
                 'th-target-small': 'ເປົ້າໝາຍ', 'th-actual-small': 'ຜົນຕົວຈິງ',
                 'th-yearly-notes': 'ບັນທຶກເຫດຜົນ',
                 'th-unit': 'ຫົວໜ່ວຍ',
+                'th-frequency': 'ຄວາມຖີ່', 'th-tracking-resp': 'ຜູ້ຮັບຜິດຊອບ',
+                'opt-quarterly': 'ລາຍໄຕມາດ', 'opt-yearly': 'ລາຍປີ', 'opt-end': 'ທ້າຍໂຄງການ',
                 'lbl-view-mode': 'ຮູບແບບ:',
                 'opt-monthly': 'ລາຍເດືອນ',
                 'opt-weekly': 'ລາຍອາທິດ',
@@ -967,6 +873,10 @@
         let auth = null;
         let currentUser = null;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'logframe-app-id';
+
+        // ຕົວແປສຳລັບເກັບຂໍ້ມູນໄຟລ໌ທີ່ເປີດຂຶ້ນມາ ເພື່ອໃຫ້ Save ທັບໄດ້
+        let currentFileHandle = null; // ສຳລັບ Web API
+        let currentFilePath = null;   // ສຳລັບ Electron
 
         async function initFirebase() {
             if (typeof __firebase_config !== 'undefined' && __firebase_config) {
@@ -1091,7 +1001,6 @@
 
                     if (data.logframeHTML) {
                         document.querySelector('.logframe-table').innerHTML = data.logframeHTML;
-                        setTimeout(syncAllHeights, 100);
                     }
                     if (data.trackingHTML && document.querySelector('.tracking-table')) {
                         document.querySelector('.tracking-table').innerHTML = data.trackingHTML;
@@ -1125,6 +1034,18 @@
                         Object.keys(data.customHeaders.lo).forEach(k => dict['lo'][k] = data.customHeaders.lo[k]);
                     }
 
+                    // Fix for backward compatibility: Ensure old cache data has prefix attributes on ribbons
+                    document.querySelectorAll('.logframe-table tr.blue-ribbon').forEach(ribbon => {
+                        if (!ribbon.dataset.prefix) {
+                            const parentRef = ribbon.dataset.parentRef;
+                            if (parentRef) {
+                                const parentRow = document.querySelector(`tr[data-ref="${parentRef}"]`);
+                                if (parentRow) ribbon.dataset.prefix = parentRow.dataset.prefix;
+                            }
+                        }
+                    });
+
+                    sortLogframeTables();
                     setLanguage(currentLang);
                     buildPlanningTimeline();
                     showToast("ດຶງຂໍ້ມູນຫຼ້າສຸດຈາກແຄສ Cloud ສຳເລັດ!", "success");
@@ -1137,6 +1058,37 @@
                 console.error(err);
                 if (manualTrigger) showToast("ດຶງຂໍ້ມູນຜິດພາດ ກະລຸນາລອງໃໝ່", "error");
             }
+        }
+
+        // --- NEW SORTING SYSTEM ---
+        function sortLogframeTables() {
+            const tbodies = document.querySelectorAll('.logframe-table tbody');
+            tbodies.forEach(tbody => {
+                const rows = Array.from(tbody.querySelectorAll('tr[data-prefix]'));
+                if (rows.length === 0) return;
+
+                // Sort all prefixed rows hierarchically
+                rows.sort((a, b) => {
+                    const p1 = a.dataset.prefix.split('.').map(Number);
+                    const p2 = b.dataset.prefix.split('.').map(Number);
+                    const len = Math.max(p1.length, p2.length);
+                    for (let i = 0; i < len; i++) {
+                        const num1 = isNaN(p1[i]) ? -1 : p1[i]; // -1 forces parent ribbons to appear before children
+                        const num2 = isNaN(p2[i]) ? -1 : p2[i];
+                        if (num1 !== num2) return num1 - num2;
+                    }
+                    return 0;
+                });
+                
+                // Re-append sorted rows to DOM
+                rows.forEach(row => tbody.appendChild(row));
+                
+                // Make sure the bottom spacer row stays at the end
+                const spacer = tbody.querySelector('tr:not([data-prefix]) td.h-4')?.parentElement;
+                if (spacer) tbody.appendChild(spacer);
+            });
+            
+            syncAllHeights();
         }
 
         function setLanguage(lang) {
@@ -1193,6 +1145,16 @@
                 `;
             });
 
+            document.querySelectorAll('.track-frequency').forEach(select => {
+                const val = select.value;
+                select.innerHTML = `
+                    <option value="monthly" ${val === 'monthly' ? 'selected' : ''}>${dict[lang]['opt-monthly'] || dict['en']['opt-monthly']}</option>
+                    <option value="quarterly" ${val === 'quarterly' ? 'selected' : ''}>${dict[lang]['opt-quarterly'] || dict['en']['opt-quarterly']}</option>
+                    <option value="yearly" ${val === 'yearly' ? 'selected' : ''}>${dict[lang]['opt-yearly'] || dict['en']['opt-yearly']}</option>
+                    <option value="end" ${val === 'end' ? 'selected' : ''}>${dict[lang]['opt-end'] || dict['en']['opt-end']}</option>
+                `;
+            });
+
             document.querySelectorAll('.risk-level-select').forEach(select => {
                 const val = select.value;
                 select.innerHTML = `
@@ -1246,6 +1208,7 @@
             if(activeTab === 'tab-logframe') document.getElementById('btn-unhide-lf-cols').classList.remove('hidden');
             if(activeTab === 'tab-planning') document.getElementById('btn-unhide-pl-cols').classList.remove('hidden');
             if(activeTab === 'tab-budget') document.getElementById('btn-unhide-bg-cols').classList.remove('hidden');
+            if(activeTab === 'tab-tracking') document.getElementById('btn-unhide-tk-cols').classList.remove('hidden');
         }
 
         function unhideColumns(tabPrefix) {
@@ -1258,6 +1221,9 @@
             } else if(tabPrefix === 'bg') {
                 document.querySelectorAll('.col-bg-res, .col-bg-unit, .col-bg-cost, .col-bg-qty').forEach(el => el.classList.remove('hidden'));
                 document.getElementById('btn-unhide-bg-cols').classList.add('hidden');
+            } else if(tabPrefix === 'tk') {
+                document.querySelectorAll('.col-tk-unit, .col-tk-freq, .col-tk-resp, .col-tk-base, .col-tk-tgt, .col-tk-act, .col-tk-prog, .col-tk-stat').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('btn-unhide-tk-cols').classList.add('hidden');
             }
         }
 
@@ -1574,6 +1540,75 @@
             showToast("ດາວໂຫຼດສຳເລັດແລ້ວ! (ກວດເບິ່ງໃນໂຟນເດີ Downloads)", "success");
         }
 
+        async function saveProject() {
+            const jsonString = getProjectDataAsJSON();
+            const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
+            const defaultName = (document.getElementById('proj-code')?.value || 'Logframe') + '.json';
+
+            try {
+                // 1. ສຳລັບ Electron
+                if (isElectron && window.electronAPI) {
+                    if (window.electronAPI.saveExistingFile && currentFilePath) {
+                        // ຖ້າມີໄຟລ໌ທີ່ເຄີຍເປີດ ຫຼື ເຊບໄວ້ ໃຫ້ຂຽນທັບເລີຍ
+                        const result = await window.electronAPI.saveExistingFile(jsonString, currentFilePath);
+                        if (result.success) showToast("ບັນທຶກທັບໄຟລ໌ເດີມສຳເລັດແລ້ວ!", "success");
+                        else showToast("ເກີດຂໍ້ຜິດພາດ: " + result.error, "error");
+                        return;
+                    } else if (window.electronAPI.saveFile) {
+                        // ຖ້າເປັນ Electron ຍັງບໍ່ເຄີຍເຊບ ໃຫ້ເປີດໜ້າຈໍ Save As
+                        const result = await window.electronAPI.saveFile(jsonString, defaultName);
+                        if (result.success) {
+                            if(result.filePath) currentFilePath = result.filePath;
+                            showToast("ບັນທຶກສຳເລັດແລ້ວ!", "success");
+                        } else if (!result.canceled) {
+                            showToast("ເກີດຂໍ້ຜິດພາດ: " + result.error, "error");
+                        }
+                        return;
+                    }
+                }
+
+                // 2. ສຳລັບ Web Browser ທີ່ຮອງຮັບ File Access API
+                if (!isElectron && window.showSaveFilePicker) {
+                    // ຖ້າມີ File Handle ເກົ່າທີ່ເຄີຍເປີດ ຫຼື ເຊບໄວ້ -> ຂຽນທັບເລີຍ
+                    if (currentFileHandle) {
+                        try {
+                            const writable = await currentFileHandle.createWritable();
+                            await writable.write(jsonString);
+                            await writable.close();
+                            showToast("ບັນທຶກທັບໄຟລ໌ເດີມສຳເລັດແລ້ວ!", "success");
+                            return;
+                        } catch (e) {
+                            console.warn("ບໍ່ສາມາດຂຽນທັບໄດ້, ຈະປ່ຽນໄປໃຊ້ Save As:", e);
+                        }
+                    }
+                    
+                    // ຖ້າຍັງບໍ່ເຄີຍເຊບມາກ່ອນ ຫຼື ຂຽນທັບບໍ່ໄດ້ -> ເປີດໜ້າຈໍ Save As
+                    try {
+                        const handle = await window.showSaveFilePicker({
+                            suggestedName: defaultName,
+                            types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
+                        });
+                        currentFileHandle = handle; // ບັນທຶກ Handle ໄວ້ເພື່ອໃຫ້ Save ທັບໄດ້ໃນຄັ້ງຕໍ່ໄປ (Ctrl+S)
+                        const writable = await handle.createWritable();
+                        await writable.write(jsonString);
+                        await writable.close();
+                        showToast("ບັນທຶກສຳເລັດແລ້ວ!", "success");
+                        return;
+                    } catch (e) {
+                        if (e.name === 'AbortError') return; // User ກົດ Cancel ບໍ່ຕ້ອງແຈ້ງເຕືອນ
+                        console.warn("File Picker API ຖືກບລັອກ:", e);
+                    }
+                }
+
+                // 3. Fallback: ຖ້າເປັນ Browser ເກົ່າ ຫຼື ຖືກບລັອກ ໃຫ້ໂຫຼດເປັນໄຟລ໌ໃໝ່
+                downloadProject();
+
+            } catch (err) {
+                console.error("Save Error:", err);
+                showToast("ການບັນທຶກຜິດພາດ: " + err.message, "error");
+            }
+        }
+
         async function openLocalFile() {
             const isElectron = navigator.userAgent.toLowerCase().indexOf(' electron/') > -1;
             
@@ -1582,6 +1617,7 @@
                 if (window.electronAPI && window.electronAPI.openFile) {
                     const result = await window.electronAPI.openFile();
                     if (result.success && result.data) {
+                        currentFilePath = result.filePath; // ບັນທຶກ Path ໄວ້ເພື່ອໃຫ້ Save ທັບໄດ້
                         processImportedData(result.data);
                     } else if (!result.canceled) {
                         showToast("ເກີດຂໍ້ຜິດພາດໃນການເປີດໄຟລ໌: " + result.error, "error");
@@ -1601,6 +1637,7 @@
                         const [fileHandle] = await window.showOpenFilePicker({
                             types: [{ description: 'Logframe Project File', accept: {'application/json': ['.json']} }]
                         });
+                        currentFileHandle = fileHandle; // ບັນທຶກ Handle ໄວ້ເພື່ອໃຫ້ Save ທັບໄດ້
                         const file = await fileHandle.getFile();
                         const contents = await file.text();
                         processImportedData(contents);
@@ -1611,7 +1648,7 @@
                     }
                 }
                 
-                // 4. Fallback ໃຊ້ Input File ປົກກະຕິ
+                // 4. Fallback ໃຊ້ Input File ປົກກະຕິ (ແບບນີ້ຈະ Save ທັບບໍ່ໄດ້ ຕ້ອງໂຫຼດໃໝ່)
                 document.getElementById('importJsonInput').click();
                 
             } catch (err) {
@@ -1631,7 +1668,6 @@
 
                 if (data.logframeHTML) {
                     document.querySelector('.logframe-table').innerHTML = data.logframeHTML;
-                    setTimeout(syncAllHeights, 100);
                 }
                 if (data.trackingHTML && document.querySelector('.tracking-table')) {
                     document.querySelector('.tracking-table').innerHTML = data.trackingHTML;
@@ -1665,6 +1701,18 @@
                     Object.keys(data.customHeaders.lo).forEach(k => dict['lo'][k] = data.customHeaders.lo[k]);
                 }
 
+                // Fix for backward compatibility: Ensure old cache data has prefix attributes on ribbons
+                document.querySelectorAll('.logframe-table tr.blue-ribbon').forEach(ribbon => {
+                    if (!ribbon.dataset.prefix) {
+                        const parentRef = ribbon.dataset.parentRef;
+                        if (parentRef) {
+                            const parentRow = document.querySelector(`tr[data-ref="${parentRef}"]`);
+                            if (parentRow) ribbon.dataset.prefix = parentRow.dataset.prefix;
+                        }
+                    }
+                });
+
+                sortLogframeTables();
                 setLanguage(currentLang);
                 buildPlanningTimeline();
                 showToast("ເປີດໄຟລ໌ສຳເລັດແລ້ວ! (File opened successfully)", "success");
@@ -1877,7 +1925,7 @@
                     ribbons.forEach(ribbon => ribbon.remove());
                 }
                 tr.remove();
-                syncAllHeights();
+                sortLogframeTables();
             }
         }
 
@@ -1947,20 +1995,7 @@
             }
         }
 
-        function incrementPrefix(prefix) {
-            const parts = prefix.split('.');
-            let lastPart = parts[parts.length - 1];
-            if (!isNaN(lastPart)) {
-                parts[parts.length - 1] = parseInt(lastPart) + 1;
-            } else if (lastPart.length === 1 && /[a-zA-Z]/.test(lastPart)) { 
-                let charCode = lastPart.charCodeAt(0);
-                parts[parts.length - 1] = String.fromCharCode(charCode + 1);
-            } else {
-                parts.push('1');
-            }
-            return parts.join('.');
-        }
-
+        // --- NEW ADD ROW WITH DYNAMIC PREFIX AND SORTING ---
         function addLogframeRow(type, referenceBtn = null) {
             const tbodies = document.querySelectorAll('.logframe-table tbody');
             const uniqueId = 'id-' + Date.now() + '-' + Math.floor(Math.random() * 1000);
@@ -1974,6 +2009,46 @@
             if (type === 'goal') ribbonAddType = 'purpose';
             else if (type === 'purpose') ribbonAddType = 'output';
             else if (type === 'output') ribbonAddType = 'activity';
+
+            // Calculate next prefix dynamically based on exact existing items
+            let newPrefix = '';
+            let parentPrefix = '';
+            
+            if (type === 'goal') {
+                targetTbody = tbodies[0];
+                let max = 0;
+                targetTbody.querySelectorAll('tr[data-prefix]').forEach(row => {
+                    const p = row.dataset.prefix;
+                    if (!p.includes('.')) {
+                        const val = parseInt(p);
+                        if (!isNaN(val) && val > max) max = val;
+                    }
+                });
+                newPrefix = (max + 1).toString();
+            } else {
+                if (referenceBtn) {
+                    const tr = referenceBtn.closest('tr');
+                    if (tr.classList.contains('blue-ribbon')) {
+                        parentPrefix = tr.dataset.prefix || '';
+                    } else {
+                        const parts = (tr.dataset.prefix || '').split('.');
+                        parts.pop();
+                        parentPrefix = parts.join('.');
+                    }
+                }
+                if (!parentPrefix) parentPrefix = '1';
+                
+                targetTbody = type === 'purpose' ? tbodies[1] : (type === 'output' ? tbodies[2] : tbodies[3]);
+                let max = 0;
+                targetTbody.querySelectorAll('tr[data-prefix]').forEach(row => {
+                    const p = row.dataset.prefix;
+                    if (p.startsWith(parentPrefix + '.') && p.split('.').length === parentPrefix.split('.').length + 1) {
+                        const val = parseInt(p.split('.').pop());
+                        if (!isNaN(val) && val > max) max = val;
+                    }
+                });
+                newPrefix = `${parentPrefix}.${max + 1}`;
+            }
 
             const addBtnHtml = `<button onclick="addItem(this, false)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>`;
             const addBtnHtmlTrue = `<button onclick="addItem(this, true)" class="add-btn absolute bottom-1 right-1 bg-blue-50 hover:bg-blue-100 text-blue-600 border border-blue-200 px-2 py-1 rounded shadow-sm opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center hide-on-export z-10 text-[10px] font-medium" contenteditable="false" title="Add List Item"><i class="fas fa-list-ul mr-1"></i>ຂໍ້ໃໝ່ (Item)</button>`;
@@ -2018,31 +2093,7 @@
                 </div>
             `;
 
-            let newPrefix = '';
-            if (referenceBtn) {
-                const tr = referenceBtn.closest('tr');
-                if (tr.classList.contains('blue-ribbon')) {
-                    const enText = tr.querySelector('.en-text')?.textContent || '';
-                    const match = enText.match(/(?:Goal\s*|Output\s*)?([\w\d]+(?:\.[\w\d]+)*)/i);
-                    const parentPrefix = match ? match[1] : '';
-                    newPrefix = parentPrefix ? parentPrefix + '.1' : '1';
-                } else {
-                    const currentPrefix = tr.dataset.prefix || '';
-                    if (currentPrefix) {
-                        newPrefix = incrementPrefix(currentPrefix);
-                    } else {
-                        newPrefix = 'X';
-                    }
-                }
-            }
-
             if (type === 'goal') {
-                targetTbody = tbodies[0];
-                if (!newPrefix) {
-                    const count = targetTbody.querySelectorAll('.sync-row').length + 1;
-                    newPrefix = count.toString();
-                }
-
                 trHTML = `
                     <tr class="sync-row" data-prefix="${newPrefix}" data-ref="${uniqueId}">
                         <td class="editable-cell relative group" contenteditable="true">
@@ -2064,10 +2115,9 @@
                         </td>
                     </tr>
                 `;
-                
                 ribbonTbody = tbodies[1];
                 ribbonHTML = `
-                    <tr class="blue-ribbon" data-parent-ref="${uniqueId}">
+                    <tr class="blue-ribbon" data-parent-ref="${uniqueId}" data-prefix="${newPrefix}">
                         <td colspan="4" class="!text-left editable-cell relative group" contenteditable="true">
                             ${ribbonActionsHtml}
                             <div class="en-text">Goal ${newPrefix}: New Goal</div>
@@ -2076,12 +2126,6 @@
                     </tr>
                 `;
             } else if (type === 'purpose') {
-                targetTbody = tbodies[1];
-                if (!newPrefix) {
-                    const count = targetTbody.querySelectorAll('.purpose-row').length + 1;
-                    newPrefix = count.toString();
-                }
-
                 trHTML = `
                     <tr class="purpose-row sync-row" data-prefix="${newPrefix}" data-ref="${uniqueId}">
                         <td class="editable-cell relative group" contenteditable="true">
@@ -2109,10 +2153,9 @@
                         </td>
                     </tr>
                 `;
-                
                 ribbonTbody = tbodies[2];
                 ribbonHTML = `
-                    <tr class="blue-ribbon level-3-section" data-parent-ref="${uniqueId}">
+                    <tr class="blue-ribbon level-3-section" data-parent-ref="${uniqueId}" data-prefix="${newPrefix}">
                         <td colspan="4" class="!text-left editable-cell relative group" contenteditable="true">
                             ${ribbonActionsHtml}
                             <div class="en-text">${newPrefix}. New Purpose</div>
@@ -2121,11 +2164,6 @@
                     </tr>
                 `;
             } else if (type === 'output') {
-                targetTbody = tbodies[2];
-                if (!newPrefix) {
-                    newPrefix = 'X.X';
-                }
-
                 trHTML = `
                     <tr class="output-row sync-row level-3-section" data-prefix="${newPrefix}" data-ref="${uniqueId}">
                         <td class="!bg-white editable-cell relative group" contenteditable="true">
@@ -2153,10 +2191,9 @@
                         </td>
                     </tr>
                 `;
-                
                 ribbonTbody = tbodies[3];
                 ribbonHTML = `
-                    <tr class="blue-ribbon level-4-section" data-parent-ref="${uniqueId}">
+                    <tr class="blue-ribbon level-4-section" data-parent-ref="${uniqueId}" data-prefix="${newPrefix}">
                         <td colspan="4" class="!text-left editable-cell relative group" contenteditable="true">
                             ${ribbonActionsHtml}
                             <div class="en-text">Output ${newPrefix}: New Output</div>
@@ -2165,11 +2202,6 @@
                     </tr>
                 `;
             } else if (type === 'activity') {
-                targetTbody = tbodies[3];
-                if (!newPrefix) {
-                    newPrefix = 'X.X.X';
-                }
-
                 trHTML = `
                     <tr class="activity-row level-4-section" data-prefix="${newPrefix}" data-ref="${uniqueId}">
                         <td class="!bg-white editable-cell relative group" contenteditable="true">
@@ -2187,37 +2219,21 @@
                 `;
             }
 
-            const insertRow = (tbody, html, refNode) => {
-                const tempDiv = document.createElement('table');
-                tempDiv.innerHTML = `<tbody>${html}</tbody>`;
-                const newRow = tempDiv.querySelector('tr');
-
-                if (refNode) {
-                    refNode.parentNode.insertBefore(newRow, refNode.nextElementSibling);
-                } else {
-                    const rows = tbody.querySelectorAll('tr');
-                    let spacer = null;
-                    if(rows.length > 0 && rows[rows.length-1].querySelector('td[colspan="4"]')?.classList.contains('h-4')) {
-                        spacer = rows[rows.length-1];
-                    }
-                    if (spacer) {
-                        tbody.insertBefore(newRow, spacer);
-                    } else {
-                        tbody.appendChild(newRow);
-                    }
-                }
-                return newRow;
-            };
-
+            // Append to table (we don't need complex insertBefore logic because sortLogframeTables handles the order)
             if (targetTbody && trHTML) {
-                let refNode = referenceBtn ? referenceBtn.closest('tr') : null;
-                const newRow = insertRow(targetTbody, trHTML, refNode);
-                if (newRow.classList.contains('sync-row')) syncRowHeights(newRow);
+                const tempDiv = document.createElement('table');
+                tempDiv.innerHTML = `<tbody>${trHTML}</tbody>`;
+                const newRow = tempDiv.querySelector('tr');
+                targetTbody.appendChild(newRow);
             }
             if (ribbonTbody && ribbonHTML) {
-                insertRow(ribbonTbody, ribbonHTML, null);
+                const tempDiv = document.createElement('table');
+                tempDiv.innerHTML = `<tbody>${ribbonHTML}</tbody>`;
+                const newRibbon = tempDiv.querySelector('tr');
+                ribbonTbody.appendChild(newRibbon);
             }
             
+            sortLogframeTables();
             setLanguage(currentLang);
         }
 
@@ -2270,6 +2286,8 @@
                         }
 
                         if (row.dataset.prefix !== baseNumber) {
+                            row.dataset.prefix = baseNumber;
+                            // Update children prefixes
                             const indCell = row.querySelector('.col-lf-ind');
                             if (indCell) {
                                 const listItems = indCell.querySelectorAll('.list-item');
@@ -2279,7 +2297,14 @@
                                     });
                                 });
                             }
-                            row.dataset.prefix = baseNumber;
+                            
+                            // Update matching ribbons' prefixes so sorting keeps working correctly
+                            if (row.dataset.ref) {
+                                const ribbons = document.querySelectorAll(`tr.blue-ribbon[data-parent-ref="${row.dataset.ref}"]`);
+                                ribbons.forEach(ribbon => {
+                                    ribbon.dataset.prefix = baseNumber;
+                                });
+                            }
                         }
                     }
                 }
@@ -2496,8 +2521,8 @@
             
             const thead = document.querySelector('.planning-table thead');
             thead.innerHTML = `
-                <tr>
-                    <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[250px] w-[35%] first-row" rowspan="2">Activity / ກິດຈະກຳ</th>
+                <tr class="bg-blue-50">
+                    <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[250px] w-[35%] first-row sticky-col inherit-bg" rowspan="2">Activity / ກິດຈະກຳ</th>
                     <th class="px-2 py-3 font-semibold text-gray-700 border-r w-24 text-center first-row col-pl-resp group/th relative" rowspan="2">
                         <span data-i18n="th-responsible">${respLabel}</span>
                         <button onclick="hideColumn('col-pl-resp')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button>
@@ -2516,7 +2541,7 @@
                     </th>
                     ${headerTopHtml}
                 </tr>
-                <tr class="bg-gray-50 text-gray-500">
+                <tr class="bg-blue-50 text-gray-500">
                     ${headerBottomHtml}
                 </tr>
             `;
@@ -2567,15 +2592,15 @@
 
                 if(isGoalRow(rawText)) {
                     indent = 'font-bold text-blue-900';
-                    rowClass += 'bg-blue-100/50';
+                    rowClass += 'bg-blue-100';
                 } else if(isPurposeRow(rawText)) {
                     indent = 'font-bold pl-4 text-gray-800';
-                    rowClass += 'bg-gray-100/80';
+                    rowClass += 'bg-gray-100';
                 } else if(isOutputRow(rawText)) {
                     indent = 'font-semibold pl-8 text-blue-800';
-                    rowClass += 'bg-blue-50/50';
+                    rowClass += 'bg-blue-50';
                 } else if(isActivityRow(rawText)) {
-                    indent = 'pl-12 text-gray-700 bg-white';
+                    indent = 'pl-12 text-gray-700';
                     rowClass += 'hover:bg-gray-50 bg-white';
                     isActivity = true;
                 }
@@ -2618,7 +2643,7 @@
                     tr.dataset.key = key;
                     tr.className = rowClass;
                     tr.innerHTML = `
-                        <td class="px-4 py-2 border-r ${indent} relative group/row">
+                        <td class="px-4 py-2 border-r ${indent} relative group/row sticky-col inherit-bg">
                             <button onclick="hideRow(this)" class="absolute left-1 top-2 text-gray-400 hover:text-blue-600 opacity-0 group-hover/row:opacity-100 transition-opacity hide-on-export z-10" title="Hide Row"><i class="fas fa-eye-slash text-[10px]"></i></button>
                             ${visibleHtml}
                         </td>
@@ -2732,7 +2757,7 @@
                     
                     const tr = document.createElement('tr');
                     tr.dataset.key = key;
-                    tr.className = 'border-b hover:bg-gray-50';
+                    tr.className = 'border-b hover:bg-gray-50 bg-white';
                     
                     let costNum = parseFloat(prev.cost.replace(/,/g, '')) || 0;
                     let qtyNum = parseFloat(prev.qty.replace(/,/g, '')) || 0;
@@ -2740,7 +2765,7 @@
                     total += rowTotal;
 
                     tr.innerHTML = `
-                        <td class="px-4 py-2 border-r text-gray-700 relative group/row">
+                        <td class="px-4 py-2 border-r text-gray-700 relative group/row sticky-col inherit-bg">
                             <button onclick="hideRow(this)" class="absolute left-1 top-2 text-gray-400 hover:text-blue-600 opacity-0 group-hover/row:opacity-100 transition-opacity hide-on-export z-10" title="Hide Row"><i class="fas fa-eye-slash text-[10px]"></i></button>
                             ${visibleHtml}
                         </td>
@@ -2835,7 +2860,6 @@
             tbody.appendChild(tr);
             updateRiskRowNumbers();
             
-            // Trigger color update manually for new row
             const newSelect = tr.querySelector('.risk-level-select');
             if (newSelect) updateRiskColor(newSelect);
         }
@@ -2999,6 +3023,8 @@
 
                     existingData[titleKey] = {
                         unitType: tr.querySelector('.unit-type-selector') ? tr.querySelector('.unit-type-selector').value : 'num',
+                        frequency: tr.querySelector('.track-frequency') ? tr.querySelector('.track-frequency').value : 'yearly',
+                        responsible: tr.querySelector('.track-resp') ? tr.querySelector('.track-resp').innerText.trim() : '',
                         baseline: tr.querySelector('.track-baseline') ? tr.querySelector('.track-baseline').innerText.trim() : '',
                         target: tr.querySelector('.track-target').innerText.trim(),
                         actual: tr.querySelector('.track-actual').innerText.trim(),
@@ -3013,7 +3039,7 @@
 
             trackingTbody.innerHTML = '';
             let hasData = false;
-            const colspanTotal = 7 + (trackingYearCount * 3);
+            const colspanTotal = 9 + (trackingYearCount * 3);
             const frag = document.createDocumentFragment();
 
             logframeTable.querySelectorAll('tr').forEach(row => {
@@ -3042,8 +3068,23 @@
                 }
 
                 if (isHeader) {
+                    // ເອົາປຸ່ມ Action ອອກຈາກ Header ໃນໜ້າຕິດຕາມເພື່ອໃຫ້ສະອາດຕາ
+                    const tempDiv = document.createElement('div');
+                    tempDiv.innerHTML = visibleHtml;
+                    const btnDiv = tempDiv.querySelector('.absolute.top-1.right-1');
+                    if (btnDiv) btnDiv.remove();
+
                     const trHeader = document.createElement('tr');
-                    trHeader.innerHTML = `<td class="px-4 py-2 border-r ${indentClass} ${bgColor}" colspan="${colspanTotal}">${visibleHtml}</td>`;
+                    trHeader.className = bgColor;
+                    
+                    // ໃຊ້ sticky ກັບ div ທາງໃນ ເພື່ອໃຫ້ຂໍ້ຄວາມເລື່ອນຕາມໜ້າຈໍ
+                    trHeader.innerHTML = `
+                        <td class="p-0 border-r" colspan="${colspanTotal}">
+                            <div class="sticky left-0 inline-block px-4 py-2 w-fit max-w-[90vw] ${indentClass}">
+                                ${tempDiv.innerHTML}
+                            </div>
+                        </td>
+                    `;
                     frag.appendChild(trHeader);
 
                     const indCell = row.querySelector('.col-lf-ind');
@@ -3054,7 +3095,7 @@
 
                             if (rawIndText) {
                                 const dataKey = rawText.substring(0, 50).replace(/\s/g, '') + '_' + rawIndText.substring(0, 50).replace(/\s/g, '');
-                                const prev = existingData[dataKey] || { unitType: 'num', baseline: '', target: '', actual: '', progress: '-', progressClass: 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress', status: 'active', notes: '<div class="en-text"></div><div class="lao-text"></div>', yearly: [] };
+                                const prev = existingData[dataKey] || { unitType: 'num', frequency: 'yearly', responsible: '', baseline: '', target: '', actual: '', progress: '-', progressClass: 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress', status: 'active', notes: '<div class="en-text"></div><div class="lao-text"></div>', yearly: [] };
 
                                 let yearlyCellsHtml = '';
                                 for(let i=0; i<trackingYearCount; i++) {
@@ -3068,7 +3109,7 @@
                                 }
 
                                 const trInd = document.createElement('tr');
-                                let rowClass = 'border-b hover:bg-gray-50 transition-colors indicator-row-track';
+                                let rowClass = 'border-b hover:bg-gray-50 transition-colors indicator-row-track bg-white';
                                 if (prev.status === 'cancelled') rowClass += ' is-cancelled';
                                 else if (prev.status === 'completed') rowClass += ' is-completed';
                                 
@@ -3076,11 +3117,11 @@
                                 trInd.dataset.key = dataKey;
                                 
                                 trInd.innerHTML = `
-                                    <td class="px-4 py-2 border-r pl-12 text-gray-700 relative group">
+                                    <td class="px-4 py-2 border-r pl-12 text-gray-700 relative group sticky-col inherit-bg">
                                         <button onclick="hideSpecificIndicator(this)" contenteditable="false" class="absolute left-4 top-3 text-red-500 hover:text-red-700 opacity-0 group-hover:opacity-100 transition-opacity hide-on-export z-10" title="Hide this row / ຊ່ອນແຖວນີ້"><i class="fas fa-eye-slash text-sm drop-shadow-sm"></i></button>
                                         ${visibleIndHtml}
                                     </td>
-                                    <td class="px-2 py-2 border-r text-center align-middle bg-gray-50">
+                                    <td class="px-2 py-2 border-r text-center align-middle bg-gray-50 col-tk-unit">
                                         <select class="unit-type-selector text-xs bg-white border border-gray-300 rounded p-1 text-gray-700 outline-none focus:border-blue-400 cursor-pointer w-full" onchange="changeUnitType(this)">
                                             <option value="num" ${prev.unitType === 'num' ? 'selected' : ''}>#</option>
                                             <option value="pct" ${prev.unitType === 'pct' ? 'selected' : ''}>%</option>
@@ -3094,12 +3135,21 @@
                                             <option value="doc" ${prev.unitType === 'doc' ? 'selected' : ''}>ສະບັບ</option>
                                         </select>
                                     </td>
-                                    <td class="px-4 py-2 border-r text-center editable-cell track-baseline format-num" contenteditable="true" onblur="formatUnit(this)">${prev.baseline}</td>
-                                    <td class="px-4 py-2 border-r text-center editable-cell track-target format-num font-bold bg-purple-50/50" contenteditable="true" oninput="calcProgress(this)" onblur="formatUnit(this)">${prev.target}</td>
+                                    <td class="px-2 py-2 border-r text-center align-middle bg-gray-50 col-tk-freq">
+                                        <select class="track-frequency text-[11px] bg-white border border-gray-300 rounded p-1 text-gray-700 outline-none focus:border-blue-400 cursor-pointer w-full" onchange="updateFrequency(this)">
+                                            <option value="monthly" ${prev.frequency === 'monthly' ? 'selected' : ''}>Monthly</option>
+                                            <option value="quarterly" ${prev.frequency === 'quarterly' ? 'selected' : ''}>Quarterly</option>
+                                            <option value="yearly" ${prev.frequency === 'yearly' ? 'selected' : ''}>Yearly</option>
+                                            <option value="end" ${prev.frequency === 'end' ? 'selected' : ''}>End of Project</option>
+                                        </select>
+                                    </td>
+                                    <td class="px-4 py-2 border-r text-center editable-cell track-resp col-tk-resp" contenteditable="true">${prev.responsible}</td>
+                                    <td class="px-4 py-2 border-r text-center editable-cell track-baseline format-num col-tk-base" contenteditable="true" onblur="formatUnit(this)">${prev.baseline}</td>
+                                    <td class="px-4 py-2 border-r text-center editable-cell track-target format-num font-bold bg-purple-50/50 col-tk-tgt" contenteditable="true" oninput="calcProgress(this)" onblur="formatUnit(this)">${prev.target}</td>
                                     ${yearlyCellsHtml}
-                                    <td class="px-4 py-2 border-r text-center editable-cell track-actual format-num font-bold bg-purple-50/50" contenteditable="true" oninput="calcProgress(this)" onblur="formatUnit(this)">${prev.actual}</td>
-                                    <td class="${prev.progressClass}">${prev.progress}</td>
-                                    <td class="px-2 py-2 relative align-top">
+                                    <td class="px-4 py-2 border-r text-center editable-cell track-actual format-num font-bold bg-purple-50/50 col-tk-act" contenteditable="true" oninput="calcProgress(this)" onblur="formatUnit(this)">${prev.actual}</td>
+                                    <td class="${prev.progressClass} col-tk-prog">${prev.progress}</td>
+                                    <td class="px-2 py-2 relative align-top col-tk-stat">
                                         <select class="status-selector text-[11px] w-full border border-gray-300 rounded p-1 mb-1 outline-none focus:border-blue-400 bg-white" onchange="applyIndicatorStatus(this)">
                                             <option value="active" ${prev.status === 'active' ? 'selected' : ''}>Active / ພວມປະຕິບັດ</option>
                                             <option value="completed" ${prev.status === 'completed' ? 'selected' : ''}>Completed / ສຳເລັດ</option>
@@ -3154,6 +3204,10 @@
         }
 
         function applyIndicatorStatus(select) {
+            select.querySelectorAll('option').forEach(opt => opt.removeAttribute('selected'));
+            const selectedOpt = select.querySelector(`option[value="${select.value}"]`);
+            if (selectedOpt) selectedOpt.setAttribute('selected', 'selected');
+
             const tr = select.closest('tr');
             tr.classList.remove('is-cancelled', 'is-completed');
             if (select.value === 'cancelled') {
@@ -3161,6 +3215,12 @@
             } else if (select.value === 'completed') {
                 tr.classList.add('is-completed');
             }
+        }
+
+        function updateFrequency(select) {
+            select.querySelectorAll('option').forEach(opt => opt.removeAttribute('selected'));
+            const selectedOpt = select.querySelector(`option[value="${select.value}"]`);
+            if (selectedOpt) selectedOpt.setAttribute('selected', 'selected');
         }
 
         let hideArchived = false;
@@ -3217,6 +3277,7 @@
         window.setLanguage = setLanguage;
         window.saveAsHTML = saveAsHTML;
         window.saveAsJSON = saveAsJSON;
+        window.saveProject = saveProject;
         window.downloadProject = downloadProject;
         window.openLocalFile = openLocalFile;
         window.importJSON = importJSON;
@@ -3253,6 +3314,7 @@
         window.hideRow = hideRow;
         window.unhideRows = unhideRows;
         window.applyIndicatorStatus = applyIndicatorStatus;
+        window.updateFrequency = updateFrequency;
         window.toggleArchivedTracking = toggleArchivedTracking;
         window.hideSpecificIndicator = hideSpecificIndicator;
         window.showAllHiddenIndicators = showAllHiddenIndicators;
@@ -3285,7 +3347,7 @@
             // Init risk colors
             document.querySelectorAll('.risk-level-select').forEach(select => updateRiskColor(select));
 
-            switchTab('logframe');
+            switchTab('project');
             setLanguage('lo');
             setupLiveSync();
             setTimeout(syncAllHeights, 100);
@@ -3293,9 +3355,10 @@
             initFirebase();
 
             document.addEventListener('keydown', function(e) {
+                // ປ່ຽນ Ctrl+S ໃຫ້ເປັນການ Save ໄຟລ໌ທັບໂຕເກົ່າ (ແທນທີ່ຈະເປັນ Cloud Cache)
                 if (e.ctrlKey && !e.shiftKey && e.key.toLowerCase() === 's') {
                     e.preventDefault();
-                    saveToCache();
+                    saveProject(); 
                 }
             });
         });
