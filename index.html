@@ -24,7 +24,7 @@
         .table-container::-webkit-scrollbar-thumb, .planning-table-container::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
         .table-container::-webkit-scrollbar-thumb:hover, .planning-table-container::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .logframe-table th, .tracking-table th, .planning-table th, .budget-table th, .risk-table th {
+        .logframe-table th, .tracking-table th, .planning-table th, .budget-table th, .risk-table th, .pirs-table th {
             background-color: #d1d5db;
             color: #374151;
             font-weight: 600;
@@ -39,7 +39,7 @@
         .planning-table th.first-row { z-index: 20; top: 0; }
         .planning-table th.second-row { z-index: 10; top: 38px; }
 
-        .logframe-table td, .tracking-table td, .planning-table td, .budget-table td, .risk-table td {
+        .logframe-table td, .tracking-table td, .planning-table td, .budget-table td, .risk-table td, .pirs-table td {
             background-color: #f3f4f6;
             border: 1px solid #9ca3af;
             padding: 8px 12px;
@@ -182,8 +182,16 @@
                 <button onclick="switchTab('tracking')" id="btn-tracking" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
                     <i class="fas fa-chart-line text-purple-600 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-tracking">Tracking</span>
                 </button>
+                <!-- NEW PIRS TAB BUTTON -->
+                <button onclick="switchTab('pirs')" id="btn-pirs" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
+                    <i class="fas fa-clipboard-list text-teal-600 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-pirs">PIRS</span>
+                </button>
                 <button onclick="switchTab('settings')" id="btn-settings" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent ml-2 border-l-2">
                     <i class="fas fa-cog text-gray-500 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-settings">Settings</span>
+                </button>
+                <!-- NEW HELP / USER GUIDE TAB BUTTON -->
+                <button onclick="switchTab('help')" id="btn-help" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
+                    <i class="fas fa-circle-question text-sky-600 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-help">Help</span>
                 </button>
             </div>
 
@@ -574,16 +582,30 @@
                     <i class="fas fa-plus mr-1"></i> <span data-i18n="btn-add-risk">Add Risk Row</span>
                 </button>
             </div>
+            <div class="flex items-center flex-wrap gap-3 mb-2 text-[11px] text-gray-600 shrink-0">
+                <span class="font-semibold text-gray-700" data-i18n="lbl-risk-matrix">Risk Matrix (Likelihood × Impact, 1–5):</span>
+                <span class="px-2 py-0.5 rounded bg-green-100 text-green-800 border border-green-300 font-bold">1–4 <span data-i18n="opt-low">Low</span></span>
+                <span class="px-2 py-0.5 rounded bg-yellow-100 text-yellow-800 border border-yellow-300 font-bold">5–9 <span data-i18n="opt-medium">Medium</span></span>
+                <span class="px-2 py-0.5 rounded bg-orange-100 text-orange-800 border border-orange-300 font-bold">10–14 <span data-i18n="opt-high">High</span></span>
+                <span class="px-2 py-0.5 rounded bg-red-200 text-red-800 border border-red-300 font-bold">15–25 <span data-i18n="opt-critical">Critical</span></span>
+            </div>
             <div class="table-container flex-1 overflow-auto bg-white border rounded-lg shadow-sm">
                 <table class="min-w-full text-sm text-left risk-table border-collapse">
                     <thead class="bg-orange-50 border-b">
                         <tr>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-[5%]" style="text-align:center;">#</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-[30%]" data-i18n="th-risk-desc">Risk Description</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-[15%] text-center" data-i18n="th-risk-level">Level</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-[35%]" data-i18n="th-mitigation">Mitigation Strategy</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-[15%]" data-i18n="th-responsible">Responsible</th>
-                            <th class="px-2 py-3 w-[5%] hide-on-export"></th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r" style="text-align:center;">#</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[130px]" data-i18n="th-risk-cat">Category</th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[200px]" data-i18n="th-risk-desc">Risk Description</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-orange-100/60" data-i18n="th-risk-like">Likelihood</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-orange-100/60" data-i18n="th-risk-impact">Impact</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-orange-100" data-i18n="th-risk-score">Inherent Risk</th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[220px]" data-i18n="th-mitigation">Mitigation Strategy</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-teal-100/50" data-i18n="th-risk-rlike">Res. Likelihood</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-teal-100/50" data-i18n="th-risk-rimpact">Res. Impact</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-teal-100/70" data-i18n="th-risk-rscore">Residual Risk</th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[120px]" data-i18n="th-responsible">Responsible</th>
+                            <th class="px-2 py-3 font-semibold text-gray-700 border-r min-w-[130px] text-center" data-i18n="th-status">Status</th>
+                            <th class="px-2 py-3 hide-on-export"></th>
                         </tr>
                     </thead>
                     <tbody id="risk-tbody" class="divide-y">
@@ -662,6 +684,184 @@
                     </thead>
                     <tbody id="tracking-tbody" class="divide-y"></tbody>
                 </table>
+            </div>
+        </div>
+
+        <!-- PIRS TAB (Performance Indicator Reference Sheet) -->
+        <div id="tab-pirs" class="tab-content hidden w-full h-full p-6 flex flex-col relative">
+            <div class="flex justify-between items-end mb-4 border-b pb-2 shrink-0 bg-white">
+                <div class="flex items-center gap-4">
+                    <h2 class="text-2xl font-bold text-gray-800" data-i18n="tab-pirs-title">Performance Indicator Reference Sheet (PIRS)</h2>
+                </div>
+                <button onclick="syncPIRS()" class="bg-teal-50 text-teal-600 border border-teal-200 px-3 py-1.5 rounded hover:bg-teal-100 transition-colors shadow-sm text-sm font-medium hide-on-export">
+                    <i class="fas fa-sync-alt mr-1"></i> <span data-i18n="btn-sync">Sync from Logframe</span>
+                </button>
+            </div>
+            <div class="flex items-center gap-4 mb-2 text-[11px] text-gray-500 shrink-0 hide-on-export">
+                <span><i class="fas fa-lock text-indigo-400 mr-1"></i><span data-i18n="lbl-pirs-auto-lf">Auto from Logframe</span></span>
+                <span><i class="fas fa-lock text-purple-400 mr-1"></i><span data-i18n="lbl-pirs-auto-tk">Auto from Tracking (edit there)</span></span>
+                <span><i class="fas fa-pen text-teal-500 mr-1"></i><span data-i18n="lbl-pirs-editable">Editable here</span></span>
+            </div>
+            <div class="table-container flex-1 overflow-auto bg-white border rounded-lg shadow-sm">
+                <table class="min-w-full text-sm text-left pirs-table border-collapse">
+                    <thead class="bg-teal-50 border-b">
+                        <tr>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/4 min-w-[240px] sticky-col inherit-bg" data-i18n="th-hierarchy">Hierarchy / Indicator</th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[110px] text-center bg-indigo-50" title="Auto from Logframe"><i class="fas fa-lock text-[9px] text-indigo-400 mr-1"></i><span data-i18n="th-pirs-type">Type / Level</span></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[200px]" data-i18n="th-pirs-def">Indicator Definition</th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[180px]" data-i18n="th-pirs-rationale">Rationale / Use</th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[160px]" data-i18n="th-pirs-source">Data Source</th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[170px]" data-i18n="th-pirs-method">Data Collection Method</th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[190px]" data-i18n="th-pirs-calc">How Calculation</th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-unit">Unit</span></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[140px] bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-disagg">Disaggregation</span></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-baseline">Baseline</span></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-target">Target</span></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-period">Frequency / Report Period</span></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[130px] bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-resp">Responsibility</span></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 min-w-[170px]" data-i18n="th-pirs-limit">Data Limitations / DQA</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pirs-tbody" class="divide-y"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- HELP / USER GUIDE TAB -->
+        <div id="tab-help" class="tab-content hidden w-full h-full p-6 overflow-y-auto bg-gray-50">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center gap-3 mb-2">
+                    <i class="fas fa-circle-question text-sky-600 text-3xl"></i>
+                    <h2 class="text-2xl font-bold text-gray-800">
+                        <span class="en-text">User Guide</span><span class="lao-text">ຄູ່ມືການນຳໃຊ້</span>
+                    </h2>
+                </div>
+                <p class="text-gray-600 mb-4">
+                    <span class="en-text">A step-by-step guide with tips and examples for every tab. Switch language with the EN / LA / EN-LA buttons at the top right.</span>
+                    <span class="lao-text">ຄູ່ມືແບບເທື່ອລະຂັ້ນຕອນ ພ້ອມຄຳແນະນຳ ແລະ ຕົວຢ່າງ ສຳລັບແຕ່ລະແທັບ. ສະຫຼັບພາສາໄດ້ທີ່ປຸ່ມ EN / LA / EN-LA ມຸມຂວາເທິງ.</span>
+                </p>
+
+                <!-- Recommended workflow -->
+                <div class="bg-sky-50 border border-sky-200 rounded-lg p-4 mb-6">
+                    <h3 class="font-bold text-sky-800 mb-2"><i class="fas fa-route mr-2"></i><span class="en-text">Recommended workflow</span><span class="lao-text">ລຳດັບການເຮັດວຽກທີ່ແນະນຳ</span></h3>
+                    <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1">
+                        <li><span class="en-text"><b>Project</b> → enter title, code, description.</span><span class="lao-text"><b>ໂຄງການ</b> → ປ້ອນຊື່, ລະຫັດ, ລາຍລະອຽດ.</span></li>
+                        <li><span class="en-text"><b>Settings</b> → choose number of levels &amp; rename headers.</span><span class="lao-text"><b>ຕັ້ງຄ່າ</b> → ເລືອກຈຳນວນລະດັບ ແລະ ປ່ຽນຊື່ຫົວຂໍ້.</span></li>
+                        <li><span class="en-text"><b>Logframe</b> → build goals, purposes, outputs, activities &amp; indicators. <i>Everything else flows from here.</i></span><span class="lao-text"><b>Logframe</b> → ສ້າງເປົ້າໝາຍ, ຈຸດປະສົງ, ຜົນໄດ້ຮັບ, ກິດຈະກຳ ແລະ ຕົວຊີ້ວັດ. <i>ທຸກແທັບອື່ນດຶງຂໍ້ມູນຈາກບ່ອນນີ້.</i></span></li>
+                        <li><span class="en-text"><b>Planning / Budget / Tracking / PIRS / Risk</b> → fill in details.</span><span class="lao-text"><b>ແຜນວຽກ / ງົບປະມານ / ຕິດຕາມ / PIRS / ຄວາມສ່ຽງ</b> → ຕື່ມລາຍລະອຽດ.</span></li>
+                        <li><span class="en-text"><b>Dashboard</b> → review. <b>Save / Export</b> → keep your work.</span><span class="lao-text"><b>ແຜງຄວບຄຸມ</b> → ກວດເບິ່ງ. <b>ບັນທຶກ / ສົ່ງອອກ</b> → ເກັບວຽກ.</span></li>
+                    </ol>
+                </div>
+
+                <div class="space-y-4 text-sm leading-relaxed">
+
+                    <!-- PROJECT -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-yellow-400">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-folder-open text-yellow-500 mr-2"></i><span class="en-text">1. Project</span><span class="lao-text">1. ໂຄງການ (Project)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">Record the project's identity — title, code and description (bilingual).</span><span class="lao-text">ບັນທຶກຂໍ້ມູນຫຼັກຂອງໂຄງການ — ຊື່, ລະຫັດ ແລະ ລາຍລະອຽດ (ສອງພາສາ).</span></p>
+                        <p class="text-gray-600 mb-1"><b><span class="en-text">Tip:</span><span class="lao-text">ຄຳແນະນຳ:</span></b> <span class="en-text">The Project Code becomes the default filename when you Download.</span><span class="lao-text">ລະຫັດໂຄງການຈະກາຍເປັນຊື່ໄຟລ໌ເລີ່ມຕົ້ນເມື່ອກົດ Download.</span></p>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">Title: "Rural Livelihoods Project" · Code: RLP-2026</span><span class="lao-text">ຊື່: "ໂຄງການສົ່ງເສີມຊີວິດການເປັນຢູ່ຊົນນະບົດ" · ລະຫັດ: RLP-2026</span></div>
+                    </div>
+
+                    <!-- SETTINGS -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-gray-400">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-cog text-gray-500 mr-2"></i><span class="en-text">2. Settings</span><span class="lao-text">2. ຕັ້ງຄ່າ (Settings)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">Set the logframe structure (2–4 levels) and rename the level headers to your terminology.</span><span class="lao-text">ກຳນົດໂຄງສ້າງ Logframe (2–4 ລະດັບ) ແລະ ປ່ຽນຊື່ຫົວຂໍ້ລະດັບໃຫ້ກົງກັບຄຳສັບຂອງທ່ານ.</span></p>
+                        <p class="text-gray-600 mb-1"><b><span class="en-text">Tip:</span><span class="lao-text">ຄຳແນະນຳ:</span></b> <span class="en-text">Do this BEFORE building the Logframe. E.g. rename "Purposes" → "Outcomes".</span><span class="lao-text">ຄວນເຮັດກ່ອນສ້າງ Logframe. ຕົວຢ່າງ: ປ່ຽນ "ຈຸດປະສົງ" → "ຜົນໄດ້ຮັບຫຼັກ".</span></p>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">3 levels = Goals → Outcomes → Outputs (no activities).</span><span class="lao-text">3 ລະດັບ = ເປົ້າໝາຍ → ຜົນໄດ້ຮັບ → ຜົນຜະລິດ (ບໍ່ມີກິດຈະກຳ).</span></div>
+                    </div>
+
+                    <!-- LOGFRAME -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-green-500">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-table-cells text-green-600 mr-2"></i><span class="en-text">3. Logframe</span><span class="lao-text">3. Logframe (ຕາຕະລາງເຫດຜົນ)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">The heart of the tool. Build the results chain and its indicators, verification sources and assumptions.</span><span class="lao-text">ຫົວໃຈຂອງເຄື່ອງມື. ສ້າງລະບົບຕ່ອງໂສ້ຜົນ ພ້ອມຕົວຊີ້ວັດ, ແຫຼ່ງຢັ້ງຢືນ ແລະ ຂໍ້ສົມມຸດຕິຖານ.</span></p>
+                        <p class="text-gray-700 font-semibold mb-1"><span class="en-text">How to use:</span><span class="lao-text">ວິທີໃຊ້:</span></p>
+                        <ol class="list-decimal list-inside text-gray-600 space-y-0.5 mb-2">
+                            <li><span class="en-text">Click <b>"ໝວດໃໝ່ (Row)"</b> on the Goals header to add a goal.</span><span class="lao-text">ກົດ <b>"ໝວດໃໝ່ (Row)"</b> ທີ່ຫົວ Goals ເພື່ອເພີ່ມເປົ້າໝາຍ.</span></li>
+                            <li><span class="en-text">Hover a row → green <i class="fas fa-arrow-down"></i> adds a sibling, teal <i class="fas fa-level-down-alt"></i> adds a child level.</span><span class="lao-text">ເລື່ອນເມົ້າໃສ່ແຖວ → ປຸ່ມຂຽວ <i class="fas fa-arrow-down"></i> ເພີ່ມແຖວດຽວກັນ, ປຸ່ມ teal <i class="fas fa-level-down-alt"></i> ເພີ່ມລະດັບຍ່ອຍ.</span></li>
+                            <li><span class="en-text">Use <b>"ຂໍ້ໃໝ່ (Item)"</b> to add indicators in the Indicators column.</span><span class="lao-text">ໃຊ້ <b>"ຂໍ້ໃໝ່ (Item)"</b> ເພື່ອເພີ່ມຕົວຊີ້ວັດໃນຖັນ Indicators.</span></li>
+                            <li><span class="en-text">The yellow <i class="fas fa-filter"></i> filter shows only one goal's branch.</span><span class="lao-text">ປຸ່ມ <i class="fas fa-filter"></i> ສີເຫຼືອງ ສະແດງສະເພາະສາຍຂອງເປົ້າໝາຍດຽວ.</span></li>
+                        </ol>
+                        <p class="text-gray-600 mb-1"><b><span class="en-text">Tip:</span><span class="lao-text">ຄຳແນະນຳ:</span></b> <span class="en-text">Keep the numbering (1, 1.1, 1.1.1) — Planning, Budget, Tracking &amp; PIRS rely on it.</span><span class="lao-text">ຮັກສາລະບົບເລກ (1, 1.1, 1.1.1) — ແທັບ ແຜນວຽກ, ງົບປະມານ, ຕິດຕາມ ແລະ PIRS ໃຊ້ມັນ.</span></p>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">Goal 1: Improve household income → Indicator 1.1: % of households above poverty line.</span><span class="lao-text">ເປົ້າໝາຍ 1: ຍົກສູງລາຍຮັບຄົວເຮືອນ → ຕົວຊີ້ວັດ 1.1: % ຄົວເຮືອນທີ່ເໜືອເສັ້ນຄວາມທຸກຍາກ.</span></div>
+                    </div>
+
+                    <!-- PLANNING -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-blue-500">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-stream text-blue-500 mr-2"></i><span class="en-text">4. Planning</span><span class="lao-text">4. ແຜນວຽກ (Planning)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">A Gantt chart of activities over time (monthly or weekly).</span><span class="lao-text">ຕາຕະລາງ Gantt ຂອງກິດຈະກຳຕາມເວລາ (ລາຍເດືອນ ຫຼື ລາຍອາທິດ).</span></p>
+                        <p class="text-gray-700 font-semibold mb-1"><span class="en-text">How to use:</span><span class="lao-text">ວິທີໃຊ້:</span></p>
+                        <ol class="list-decimal list-inside text-gray-600 space-y-0.5 mb-2">
+                            <li><span class="en-text">Set <b>View</b> (Monthly/Weekly) and the <b>Timeline From / To</b> range.</span><span class="lao-text">ຕັ້ງ <b>ຮູບແບບ</b> (ລາຍເດືອນ/ລາຍອາທິດ) ແລະ ໄລຍະ <b>ຈາກ / ຫາ</b>.</span></li>
+                            <li><span class="en-text">For each activity, set <b>Start</b> and <b>End</b> dates — the bar draws itself.</span><span class="lao-text">ໃສ່ວັນທີ <b>ເລີ່ມ</b> ແລະ <b>ສິ້ນສຸດ</b> ຂອງແຕ່ລະກິດຈະກຳ — ແຖບຈະແຕ້ມເອງ.</span></li>
+                            <li><span class="en-text"><b>Status</b> colours the bar: grey=not started, blue=in progress, green=done, red=delayed.</span><span class="lao-text"><b>ສະຖານະ</b> ປ່ຽນສີແຖບ: ເທົາ=ຍັງບໍ່ເລີ່ມ, ຟ້າ=ກຳລັງເຮັດ, ຂຽວ=ສຳເລັດ, ແດງ=ລ່າຊ້າ.</span></li>
+                        </ol>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">Act 1.1.1 Training: Start 2026-03-01, End 2026-04-15, Status = In Progress.</span><span class="lao-text">ກິດຈະກຳ 1.1.1 ຝຶກອົບຮົມ: ເລີ່ມ 2026-03-01, ສິ້ນສຸດ 2026-04-15, ສະຖານະ = ກຳລັງເຮັດ.</span></div>
+                    </div>
+
+                    <!-- BUDGET -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-green-700">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-file-invoice-dollar text-green-700 mr-2"></i><span class="en-text">5. Budget</span><span class="lao-text">5. ງົບປະມານ (Budget)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">Cost each activity. Total = Unit Cost × Qty, summed into the Grand Total automatically.</span><span class="lao-text">ຄິດໄລ່ຄ່າໃຊ້ຈ່າຍແຕ່ລະກິດຈະກຳ. ລວມ = ລາຄາ/ໜ່ວຍ × ຈຳນວນ, ບວກເຂົ້າຍອດລວມໃຫຍ່ໂດຍອັດຕະໂນມັດ.</span></p>
+                        <p class="text-gray-600 mb-1"><b><span class="en-text">Tip:</span><span class="lao-text">ຄຳແນະນຳ:</span></b> <span class="en-text">Activities &amp; Resources come from the Logframe — edit only Unit, Unit Cost &amp; Qty here.</span><span class="lao-text">ກິດຈະກຳ ແລະ ຊັບພະຍາກອນ ດຶງມາຈາກ Logframe — ໃນນີ້ແກ້ສະເພາະ ຫົວໜ່ວຍ, ລາຄາ ແລະ ຈຳນວນ.</span></p>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">Training: Unit Cost 500 × Qty 4 = 2,000 USD.</span><span class="lao-text">ຝຶກອົບຮົມ: ລາຄາ 500 × ຈຳນວນ 4 = 2,000 USD.</span></div>
+                    </div>
+
+                    <!-- RISK -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-orange-500">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-exclamation-triangle text-orange-500 mr-2"></i><span class="en-text">6. Risk (Risk Register)</span><span class="lao-text">6. ຈັດການຄວາມສ່ຽງ (Risk Register)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">An ISO 31000 risk register. Score = Likelihood × Impact (1–5), with a residual score after mitigation.</span><span class="lao-text">ບັນຊີຄວາມສ່ຽງຕາມ ISO 31000. ຄະແນນ = ໂອກາດ × ຜົນກະທົບ (1–5), ພ້ອມຄະແນນຄົງເຫຼືອຫຼັງມາດຕະການ.</span></p>
+                        <p class="text-gray-700 font-semibold mb-1"><span class="en-text">How to use:</span><span class="lao-text">ວິທີໃຊ້:</span></p>
+                        <ol class="list-decimal list-inside text-gray-600 space-y-0.5 mb-2">
+                            <li><span class="en-text">Click <b>Add Risk Row</b>, choose a Category and describe the risk.</span><span class="lao-text">ກົດ <b>ເພີ່ມຄວາມສ່ຽງ</b>, ເລືອກໝວດ ແລະ ອະທິບາຍຄວາມສ່ຽງ.</span></li>
+                            <li><span class="en-text">Pick <b>Likelihood</b> &amp; <b>Impact</b> → the <b>Inherent Risk</b> score colours itself.</span><span class="lao-text">ເລືອກ <b>ໂອກາດ</b> ແລະ <b>ຜົນກະທົບ</b> → ຄະແນນ <b>ຄວາມສ່ຽງເລີ່ມຕົ້ນ</b> ປ່ຽນສີເອງ.</span></li>
+                            <li><span class="en-text">Write the mitigation, then set <b>Residual</b> Likelihood/Impact to show its effect.</span><span class="lao-text">ຂຽນມາດຕະການ, ແລ້ວຕັ້ງ <b>ໂອກາດ/ຜົນກະທົບ ຄົງເຫຼືອ</b> ເພື່ອສະແດງຜົນຂອງມັນ.</span></li>
+                        </ol>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">"Currency volatility" — Inherent 5×4=20 (Critical) → after hedging, Residual 2×3=6 (Medium).</span><span class="lao-text">"ຄ່າເງິນຜັນຜວນ" — ເລີ່ມຕົ້ນ 5×4=20 (ວິກິດ) → ຫຼັງປ້ອງກັນ, ຄົງເຫຼືອ 2×3=6 (ປານກາງ).</span></div>
+                    </div>
+
+                    <!-- TRACKING -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-purple-600">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-chart-line text-purple-600 mr-2"></i><span class="en-text">7. Tracking</span><span class="lao-text">7. ຕິດຕາມຕົວຊີ້ວັດ (Tracking)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">Record baseline, targets and actuals per year; progress % is calculated automatically.</span><span class="lao-text">ບັນທຶກຄ່າພື້ນຖານ, ເປົ້າໝາຍ ແລະ ຜົນຕົວຈິງແຕ່ລະປີ; ຄິດໄລ່ % ຄວາມຄືບໜ້າໃຫ້ອັດຕະໂນມັດ.</span></p>
+                        <p class="text-gray-700 font-semibold mb-1"><span class="en-text">How to use:</span><span class="lao-text">ວິທີໃຊ້:</span></p>
+                        <ol class="list-decimal list-inside text-gray-600 space-y-0.5 mb-2">
+                            <li><span class="en-text">Set Unit, Frequency, Responsible, Baseline and Overall Target.</span><span class="lao-text">ຕັ້ງ ຫົວໜ່ວຍ, ຄວາມຖີ່, ຜູ້ຮັບຜິດຊອບ, ຄ່າພື້ນຖານ ແລະ ເປົ້າໝາຍລວມ.</span></li>
+                            <li><span class="en-text"><b>Add Year</b> to log yearly targets/actuals; yearly actuals sum to Overall Actual.</span><span class="lao-text">ກົດ <b>ເພີ່ມປີ</b> ເພື່ອບັນທຶກເປົ້າ/ຜົນລາຍປີ; ຜົນລາຍປີຈະບວກເປັນຜົນລວມ.</span></li>
+                            <li><span class="en-text">Use <b>ແຍກຍ່ອຍ (Disaggregation)</b> for sex/age/location breakdowns.</span><span class="lao-text">ໃຊ້ <b>ແຍກຍ່ອຍ</b> ສຳລັບແຍກຕາມ ເພດ/ອາຍຸ/ສະຖານທີ່.</span></li>
+                            <li><span class="en-text">Set Status (Active/Completed/Cancelled) to archive old indicators.</span><span class="lao-text">ຕັ້ງສະຖານະ (ພວມເຮັດ/ສຳເລັດ/ຍົກເລີກ) ເພື່ອເກັບຕົວຊີ້ວັດເກົ່າ.</span></li>
+                        </ol>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Example:</span><span class="lao-text">ຕົວຢ່າງ:</span></b> <span class="en-text">Baseline 120, Target 500, Actual 300 → Progress 60%.</span><span class="lao-text">ຄ່າພື້ນຖານ 120, ເປົ້າ 500, ຕົວຈິງ 300 → ຄວາມຄືບໜ້າ 60%.</span></div>
+                    </div>
+
+                    <!-- PIRS -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-teal-600">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-clipboard-list text-teal-600 mr-2"></i><span class="en-text">8. PIRS</span><span class="lao-text">8. PIRS (ໃບອ້າງອີງຕົວຊີ້ວັດ)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">The Performance Indicator Reference Sheet — the official "definition" of each indicator.</span><span class="lao-text">ຕາຕະລາງອ້າງອີງຕົວຊີ້ວັດ — "ນິຍາມ" ທາງການຂອງແຕ່ລະຕົວຊີ້ວັດ.</span></p>
+                        <p class="text-gray-600 mb-1"><b><span class="en-text">Locked columns</span><span class="lao-text">ຖັນທີ່ລັອກ</span></b> <i class="fas fa-lock text-[10px]"></i>: <span class="en-text">Type/Level comes from the Logframe; Unit, Disaggregation, Baseline, Target, Frequency &amp; Responsibility come from Tracking — edit those there.</span><span class="lao-text">ປະເພດ/ລະດັບ ດຶງຈາກ Logframe; ຫົວໜ່ວຍ, ການແຍກຍ່ອຍ, ຄ່າພື້ນຖານ, ເປົ້າໝາຍ, ຄວາມຖີ່ ແລະ ຜູ້ຮັບຜິດຊອບ ດຶງຈາກ Tracking — ໃຫ້ແກ້ທີ່ນັ້ນ.</span></p>
+                        <p class="text-gray-600 mb-1"><b><span class="en-text">Edit here</span><span class="lao-text">ພິມໄດ້ທີ່ນີ້</span></b> <i class="fas fa-pen text-[10px] text-teal-500"></i>: <span class="en-text">Definition, Rationale, Data Source, Data Collection Method, How Calculation, Data Limitations/DQA.</span><span class="lao-text">ນິຍາມ, ເຫດຜົນ, ແຫຼ່ງຂໍ້ມູນ, ວິທີເກັບຂໍ້ມູນ, ວິທີຄຳນວນ, ຂໍ້ຈຳກັດຂໍ້ມູນ/DQA.</span></p>
+                        <div class="bg-gray-50 border rounded p-2 text-xs text-gray-700"><b><span class="en-text">Tip:</span><span class="lao-text">ຄຳແນະນຳ:</span></b> <span class="en-text">Click "Sync from Logframe" if new indicators don't appear.</span><span class="lao-text">ກົດ "ດຶງຂໍ້ມູນຈາກ Logframe" ຖ້າຕົວຊີ້ວັດໃໝ່ບໍ່ປະກົດ.</span></div>
+                    </div>
+
+                    <!-- DASHBOARD -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-pink-500">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-chart-pie text-pink-500 mr-2"></i><span class="en-text">9. Dashboard</span><span class="lao-text">9. ແຜງຄວບຄຸມ (Dashboard)</span></h3>
+                        <p class="text-gray-600 mb-2"><b><span class="en-text">Purpose:</span><span class="lao-text">ຈຸດປະສົງ:</span></b> <span class="en-text">A visual summary: budget distribution, indicator progress, and key totals. It refreshes from Budget &amp; Tracking when you open it.</span><span class="lao-text">ສະຫຼຸບແບບກາຟິກ: ການແບ່ງງົບປະມານ, ຄວາມຄືບໜ້າຕົວຊີ້ວັດ ແລະ ຍອດສຳຄັນ. ມັນອັບເດດຈາກ ງົບປະມານ ແລະ ຕິດຕາມ ເມື່ອເປີດ.</span></p>
+                    </div>
+
+                    <!-- GENERAL: SAVE / EXPORT / LANGUAGE -->
+                    <div class="bg-white border rounded-lg shadow-sm p-4 border-l-4 border-l-indigo-500">
+                        <h3 class="font-bold text-gray-800 text-base mb-2"><i class="fas fa-floppy-disk text-indigo-500 mr-2"></i><span class="en-text">10. Saving, Exporting &amp; Language</span><span class="lao-text">10. ການບັນທຶກ, ສົ່ງອອກ ແລະ ພາສາ</span></h3>
+                        <ul class="list-disc list-inside text-gray-600 space-y-1">
+                            <li><span class="en-text"><b>Save</b> (Ctrl+S) overwrites the open file; <b>Download</b> saves a new .json; <b>Open</b> loads one back.</span><span class="lao-text"><b>ບັນທຶກ</b> (Ctrl+S) ຂຽນທັບໄຟລ໌ເດີມ; <b>Download</b> ບັນທຶກ .json ໃໝ່; <b>Open</b> ໂຫຼດກັບຄືນ.</span></li>
+                            <li><span class="en-text"><b>Cloud</b> keeps a quick backup online.</span><span class="lao-text"><b>Cloud</b> ເກັບສຳຮອງດ່ວນອອນລາຍ.</span></li>
+                            <li><span class="en-text"><b>Export</b> → choose scope (current tab / all) and format (PDF, Excel, Word, HTML).</span><span class="lao-text"><b>ສົ່ງອອກ</b> → ເລືອກຂອບເຂດ (ໜ້າປັດຈຸບັນ / ທັງໝົດ) ແລະ ຮູບແບບ (PDF, Excel, Word, HTML).</span></li>
+                            <li><span class="en-text"><b>EN / LA / EN-LA</b> (top right) switches the whole app's language, including this guide.</span><span class="lao-text"><b>EN / LA / EN-LA</b> (ມຸມຂວາເທິງ) ສະຫຼັບພາສາທັງແອັບ ລວມທັງຄູ່ມືນີ້.</span></li>
+                            <li><span class="en-text"><b>Hide columns/rows</b> with the <i class="fas fa-eye-slash"></i> icons; restore with the yellow "Show…" buttons.</span><span class="lao-text"><b>ຊ່ອນຖັນ/ແຖວ</b> ດ້ວຍໄອຄອນ <i class="fas fa-eye-slash"></i>; ກູ້ຄືນດ້ວຍປຸ່ມສີເຫຼືອງ "ສະແດງ…".</span></li>
+                        </ul>
+                    </div>
+
+                </div>
             </div>
         </div>
 
@@ -748,7 +948,11 @@
         const dict = {
             'en': {
                 'menu-project': 'Project',
-                'tab-project': 'Project', 'tab-logframe': 'Logframe', 'tab-tracking': 'Tracking', 'tab-planning': 'Planning', 'tab-budget': 'Budget', 'tab-risk': 'Risk Mgt', 'tab-settings': 'Settings', 'tab-dashboard': 'Dashboard',
+                'tab-project': 'Project', 'tab-logframe': 'Logframe', 'tab-tracking': 'Tracking', 'tab-planning': 'Planning', 'tab-budget': 'Budget', 'tab-risk': 'Risk Mgt', 'tab-settings': 'Settings', 'tab-dashboard': 'Dashboard', 'tab-pirs': 'PIRS', 'tab-help': 'Help',
+                'tab-pirs-title': 'Performance Indicator Reference Sheet (PIRS)', 'th-pirs-def': 'Indicator Definition', 'th-pirs-calc': 'How Calculation', 'th-pirs-source': 'Data Source', 'th-pirs-unit': 'Unit', 'th-pirs-resp': 'Responsibility', 'th-pirs-period': 'Frequency / Report Period',
+                'th-pirs-type': 'Type / Level', 'th-pirs-rationale': 'Rationale / Use', 'th-pirs-method': 'Data Collection Method', 'th-pirs-disagg': 'Disaggregation', 'th-pirs-baseline': 'Baseline', 'th-pirs-target': 'Target', 'th-pirs-limit': 'Data Limitations / DQA',
+                'lbl-pirs-auto-lf': 'Auto from Logframe', 'lbl-pirs-auto-tk': 'Auto from Tracking (edit there)', 'lbl-pirs-editable': 'Editable here',
+                'pirs-type-impact': 'Impact', 'pirs-type-outcome': 'Outcome', 'pirs-type-output': 'Output', 'pirs-type-activity': 'Activity',
                 'btn-save-html': 'Save HTML', 'btn-json': 'JSON', 'btn-import': 'Import', 'btn-excel': 'Excel', 'btn-word': 'Word',
                 'btn-open': 'Open File', 'btn-download': 'Download', 'btn-save': 'Save',
                 'btn-add': 'Add', 'btn-sync': 'Sync from Logframe', 'btn-add-year': 'Add Year', 'btn-sync-dash': 'Refresh Data',
@@ -762,6 +966,7 @@
                 'th-indicators': 'Indicators', 'th-verification': 'Verification sources', 'th-assumptions': 'Assumptions',
                 'th-resources': 'Resources', 'th-budget': 'Budget', 'th-responsible': 'Responsible',
                 'th-risk-desc': 'Risk Description', 'th-risk-level': 'Level', 'th-mitigation': 'Mitigation Strategy',
+                'th-risk-cat': 'Category', 'th-risk-like': 'Likelihood', 'th-risk-impact': 'Impact', 'th-risk-score': 'Inherent Risk', 'th-risk-rlike': 'Res. Likelihood', 'th-risk-rimpact': 'Res. Impact', 'th-risk-rscore': 'Residual Risk', 'opt-critical': 'Critical', 'lbl-risk-matrix': 'Risk Matrix (Likelihood × Impact, 1–5):',
                 'opt-high': 'High', 'opt-medium': 'Medium', 'opt-low': 'Low',
                 'th-hierarchy': 'Hierarchy / Indicator', 'th-baseline': 'Baseline', 'th-target': 'Target', 'th-actual': 'Actual Progress', 'th-progress': 'Progress (%)', 'th-status': 'Status',
                 'th-target-overall': 'Overall Target', 'th-actual-overall': 'Overall Actual',
@@ -802,7 +1007,11 @@
             },
             'lo': {
                 'menu-project': 'ໂຄງການ',
-                'tab-project': 'ໂຄງການ', 'tab-logframe': 'Logframe', 'tab-tracking': 'ຕິດຕາມຕົວຊີ້ວັດ', 'tab-planning': 'ແຜນວຽກ', 'tab-budget': 'ງົບປະມານ', 'tab-risk': 'ຈັດການຄວາມສ່ຽງ', 'tab-settings': 'ຕັ້ງຄ່າ', 'tab-dashboard': 'ແຜງຄວບຄຸມ',
+                'tab-project': 'ໂຄງການ', 'tab-logframe': 'Logframe', 'tab-tracking': 'ຕິດຕາມຕົວຊີ້ວັດ', 'tab-planning': 'ແຜນວຽກ', 'tab-budget': 'ງົບປະມານ', 'tab-risk': 'ຈັດການຄວາມສ່ຽງ', 'tab-settings': 'ຕັ້ງຄ່າ', 'tab-dashboard': 'ແຜງຄວບຄຸມ', 'tab-pirs': 'PIRS', 'tab-help': 'ຄູ່ມື',
+                'tab-pirs-title': 'ຕາຕະລາງອ້າງອີງຕົວຊີ້ວັດ (PIRS)', 'th-pirs-def': 'ນິຍາມຕົວຊີ້ວັດ', 'th-pirs-calc': 'ວິທີຄຳນວນ', 'th-pirs-source': 'ແຫຼ່ງຂໍ້ມູນ', 'th-pirs-unit': 'ຫົວໜ່ວຍ', 'th-pirs-resp': 'ຜູ້ຮັບຜິດຊອບ', 'th-pirs-period': 'ຄວາມຖີ່ / ໄລຍະລາຍງານ',
+                'th-pirs-type': 'ປະເພດ / ລະດັບ', 'th-pirs-rationale': 'ເຫດຜົນ / ການນຳໃຊ້', 'th-pirs-method': 'ວິທີເກັບຂໍ້ມູນ', 'th-pirs-disagg': 'ການແຍກຍ່ອຍ', 'th-pirs-baseline': 'ຄ່າພື້ນຖານ', 'th-pirs-target': 'ເປົ້າໝາຍ', 'th-pirs-limit': 'ຂໍ້ຈຳກັດຂໍ້ມູນ / DQA',
+                'lbl-pirs-auto-lf': 'ດຶງຈາກ Logframe', 'lbl-pirs-auto-tk': 'ດຶງຈາກ Tracking (ແກ້ທີ່ນັ້ນ)', 'lbl-pirs-editable': 'ພິມໄດ້ທີ່ນີ້',
+                'pirs-type-impact': 'ຜົນກະທົບ', 'pirs-type-outcome': 'ຜົນໄດ້ຮັບ', 'pirs-type-output': 'ຜົນຜະລິດ', 'pirs-type-activity': 'ກິດຈະກຳ',
                 'btn-save-html': 'ບັນທຶກ HTML', 'btn-json': 'JSON', 'btn-import': 'ນຳເຂົ້າ', 'btn-excel': 'Excel', 'btn-word': 'Word',
                 'btn-open': 'ເປີດໄຟລ໌', 'btn-download': 'ດາວໂຫຼດ', 'btn-save': 'ບັນທຶກ',
                 'btn-add': 'ເພີ່ມ', 'btn-sync': 'ດຶງຂໍ້ມູນຈາກ Logframe', 'btn-add-year': 'ເພີ່ມປີ', 'btn-sync-dash': 'ອັບເດດຂໍ້ມູນ',
@@ -816,6 +1025,7 @@
                 'th-indicators': 'ຕົວຊີ້ວັດ (Indicators)', 'th-verification': 'ແຫຼ່ງຢັ້ງຢືນ (Verification)', 'th-assumptions': 'ຂໍ້ສົມມຸດຕິຖານ (Assumptions)',
                 'th-resources': 'ຊັບພະຍາກອນ (Resources)', 'th-budget': 'ງົບປະມານ (Budget)', 'th-responsible': 'ຜູ້ຮັບຜິດຊອບ',
                 'th-risk-desc': 'ລາຍລະອຽດຄວາມສ່ຽງ', 'th-risk-level': 'ລະດັບ', 'th-mitigation': 'ມາດຕະການຫຼຸດຜ່ອນ',
+                'th-risk-cat': 'ໝວດ', 'th-risk-like': 'ໂອກາດເກີດ', 'th-risk-impact': 'ຜົນກະທົບ', 'th-risk-score': 'ຄວາມສ່ຽງເລີ່ມຕົ້ນ', 'th-risk-rlike': 'ໂອກາດ (ຄົງເຫຼືອ)', 'th-risk-rimpact': 'ຜົນກະທົບ (ຄົງເຫຼືອ)', 'th-risk-rscore': 'ຄວາມສ່ຽງຄົງເຫຼືອ', 'opt-critical': 'ວິກິດ', 'lbl-risk-matrix': 'ຕາຕະລາງຄວາມສ່ຽງ (ໂອກາດ × ຜົນກະທົບ, 1–5):',
                 'opt-high': 'ສູງ', 'opt-medium': 'ປານກາງ', 'opt-low': 'ຕໍ່າ',
                 'th-hierarchy': 'ໂຄງສ້າງ / ຕົວຊີ້ວັດ', 'th-baseline': 'ຄ່າພື້ນຖານ', 'th-target': 'ເປົ້າໝາຍ', 'th-actual': 'ຜົນຕົວຈິງ', 'th-progress': 'ຄວາມຄືບໜ້າ', 'th-status': 'ສະຖານະ',
                 'th-target-overall': 'ເປົ້າໝາຍລວມ', 'th-actual-overall': 'ຜົນລວມຕົວຈິງ',
@@ -959,6 +1169,7 @@
                     logframeHTML: document.querySelector('.logframe-table').innerHTML,
                     trackingHTML: document.querySelector('.tracking-table') ? document.querySelector('.tracking-table').innerHTML : '',
                     riskHTML: document.querySelector('.risk-table') ? document.querySelector('.risk-table').innerHTML : '',
+                    pirsHTML: document.querySelector('.pirs-table') ? document.querySelector('.pirs-table').innerHTML : '',
                     trackingYearCount: trackingYearCount,
                     numLevels: currentNumLevels,
                     customHeaders: customHeaders,
@@ -1000,6 +1211,9 @@
                     }
                     if (data.riskHTML && document.querySelector('.risk-table')) {
                         document.querySelector('.risk-table').innerHTML = data.riskHTML;
+                    }
+                    if (data.pirsHTML && document.querySelector('.pirs-table')) {
+                        document.querySelector('.pirs-table').innerHTML = data.pirsHTML;
                     }
                     if (data.trackingYearCount !== undefined) trackingYearCount = data.trackingYearCount;
                     
@@ -1302,7 +1516,7 @@
             container.appendChild(style);
 
             const tabsToExport = scope === 'all' 
-                ? ['tab-project', 'tab-logframe', 'tab-planning', 'tab-budget', 'tab-risk', 'tab-tracking'] 
+                ? ['tab-project', 'tab-logframe', 'tab-planning', 'tab-budget', 'tab-risk', 'tab-tracking', 'tab-pirs']
                 : [document.querySelector('.tab-content:not(.hidden)').id];
 
             tabsToExport.forEach((tabId, index) => {
@@ -1505,6 +1719,7 @@
                 logframeHTML: document.querySelector('.logframe-table').innerHTML,
                 trackingHTML: document.querySelector('.tracking-table') ? document.querySelector('.tracking-table').innerHTML : '',
                 riskHTML: document.querySelector('.risk-table') ? document.querySelector('.risk-table').innerHTML : '',
+                pirsHTML: document.querySelector('.pirs-table') ? document.querySelector('.pirs-table').innerHTML : '',
                 trackingYearCount: trackingYearCount,
                 numLevels: currentNumLevels,
                 customHeaders: customHeaders,
@@ -1668,6 +1883,9 @@
                 if (data.riskHTML && document.querySelector('.risk-table')) {
                     document.querySelector('.risk-table').innerHTML = data.riskHTML;
                 }
+                if (data.pirsHTML && document.querySelector('.pirs-table')) {
+                    document.querySelector('.pirs-table').innerHTML = data.pirsHTML;
+                }
                 if (data.trackingYearCount !== undefined) trackingYearCount = data.trackingYearCount;
                 
                 if (data.numLevels !== undefined) {
@@ -1755,6 +1973,7 @@
             if (tabId === 'planning') syncPlanningFromLogframe();
             if (tabId === 'budget') syncBudget();
             if (tabId === 'tracking') syncTracking();
+            if (tabId === 'pirs') syncPIRS();
         }
 
         let budgetChartInstance = null;
@@ -2829,32 +3048,79 @@
             if(trackActual) calcProgress(trackActual);
         }
 
+        // ISO 31000 risk scales (bilingual labels kept inline so they always show)
+        const RISK_LIKE_OPTS = ['1 – Rare / ໜ້ອຍຫຼາຍ', '2 – Unlikely / ບໍ່ໜ້າຈະເກີດ', '3 – Possible / ອາດເກີດ', '4 – Likely / ໜ້າຈະເກີດ', '5 – Almost Certain / ເກືອບແນ່ນອນ'];
+        const RISK_IMPACT_OPTS = ['1 – Negligible / ເລັກນ້ອຍ', '2 – Minor / ໜ້ອຍ', '3 – Moderate / ປານກາງ', '4 – Major / ຫຼາຍ', '5 – Severe / ຮ້າຍແຮງ'];
+        const RISK_CAT_OPTS = [['strategic','Strategic / ຍຸດທະສາດ'], ['operational','Operational / ການດຳເນີນງານ'], ['financial','Financial / ການເງິນ'], ['fiduciary','Fiduciary / ການຄຸ້ມຄອງທຶນ'], ['safeguarding','Safeguarding / ການປົກປ້ອງ (GESI)'], ['external','External / ປັດໄຈພາຍນອກ'], ['reputational','Reputational / ຊື່ສຽງ']];
+        const RISK_STATUS_OPTS = [['open','Open / ເປີດ'], ['mitigating','Mitigating / ກຳລັງຫຼຸດຜ່ອນ'], ['monitoring','Monitoring / ຕິດຕາມ'], ['closed','Closed / ປິດ'], ['escalated','Escalated / ຍົກຂັ້ນ']];
+
         function addRiskRow() {
             const tbody = document.getElementById('risk-tbody');
             const rowCount = tbody.querySelectorAll('tr').length + 1;
             const tr = document.createElement('tr');
-            tr.className = 'hover:bg-gray-50 group/row';
+            tr.className = 'hover:bg-gray-50 group/row align-top';
+
+            const numSel = (cls, opts, def) => `<select class="text-xs border border-gray-300 rounded p-1 w-full outline-none focus:border-blue-400 bg-white cursor-pointer ${cls}" onchange="calcRiskScore(this)">${opts.map((o, i) => `<option value="${i + 1}" ${i + 1 === def ? 'selected' : ''}>${o}</option>`).join('')}</select>`;
+            const txtSel = (cls, opts) => `<select class="text-xs border border-gray-300 rounded p-1 w-full outline-none focus:border-blue-400 bg-white cursor-pointer ${cls}" onchange="persistRiskSelect(this)">${opts.map(o => `<option value="${o[0]}">${o[1]}</option>`).join('')}</select>`;
+
             tr.innerHTML = `
-                <td class="px-4 py-2 border-r text-center font-medium row-num">${rowCount}</td>
-                <td class="px-4 py-2 border-r editable-cell" contenteditable="true"></td>
-                <td class="px-4 py-2 border-r text-center align-middle">
-                    <select class="text-xs border border-gray-300 rounded p-1 w-full outline-none focus:border-blue-400 bg-white cursor-pointer risk-level-select" onchange="updateRiskColor(this)">
-                        <option value="high">${dict[currentLang]['opt-high'] || 'High'}</option>
-                        <option value="medium" selected>${dict[currentLang]['opt-medium'] || 'Medium'}</option>
-                        <option value="low">${dict[currentLang]['opt-low'] || 'Low'}</option>
-                    </select>
-                </td>
-                <td class="px-4 py-2 border-r editable-cell" contenteditable="true"></td>
-                <td class="px-4 py-2 border-r editable-cell" contenteditable="true"></td>
-                <td class="px-2 py-2 text-center hide-on-export">
+                <td class="px-2 py-2 border-r text-center font-medium row-num align-middle">${rowCount}</td>
+                <td class="px-2 py-2 border-r align-middle">${txtSel('risk-category', RISK_CAT_OPTS)}</td>
+                <td class="px-3 py-2 border-r editable-cell" contenteditable="true"></td>
+                <td class="px-2 py-2 border-r align-middle bg-orange-50/40">${numSel('risk-like', RISK_LIKE_OPTS, 3)}</td>
+                <td class="px-2 py-2 border-r align-middle bg-orange-50/40">${numSel('risk-impact', RISK_IMPACT_OPTS, 3)}</td>
+                <td class="px-2 py-2 border-r text-center align-middle"><span class="risk-score inline-block px-2 py-1 rounded font-bold text-xs"></span></td>
+                <td class="px-3 py-2 border-r editable-cell" contenteditable="true"></td>
+                <td class="px-2 py-2 border-r align-middle bg-teal-50/40">${numSel('risk-rlike', RISK_LIKE_OPTS, 2)}</td>
+                <td class="px-2 py-2 border-r align-middle bg-teal-50/40">${numSel('risk-rimpact', RISK_IMPACT_OPTS, 2)}</td>
+                <td class="px-2 py-2 border-r text-center align-middle"><span class="risk-rscore inline-block px-2 py-1 rounded font-bold text-xs"></span></td>
+                <td class="px-3 py-2 border-r editable-cell" contenteditable="true"></td>
+                <td class="px-2 py-2 border-r align-middle">${txtSel('risk-status', RISK_STATUS_OPTS)}</td>
+                <td class="px-2 py-2 text-center hide-on-export align-middle">
                     <button onclick="deleteRiskRow(this)" class="text-red-400 hover:text-red-600 opacity-0 group-hover/row:opacity-100 transition-opacity"><i class="fas fa-trash-alt"></i></button>
                 </td>
             `;
             tbody.appendChild(tr);
             updateRiskRowNumbers();
-            
-            const newSelect = tr.querySelector('.risk-level-select');
-            if (newSelect) updateRiskColor(newSelect);
+            calcRiskScore(tr.querySelector('.risk-like'));
+        }
+
+        // Persist a select's choice into the DOM so saved riskHTML keeps it
+        function persistRiskSelect(select) {
+            if (!select) return;
+            select.querySelectorAll('option').forEach(opt => opt.removeAttribute('selected'));
+            const opt = select.querySelector(`option[value="${select.value}"]`);
+            if (opt) opt.setAttribute('selected', 'selected');
+        }
+
+        // Inherent + residual scoring via the 5x5 matrix (score = Likelihood x Impact)
+        function calcRiskScore(el) {
+            const tr = el ? el.closest('tr') : null;
+            if (!tr) return;
+
+            // Keep selected attributes in sync so the score survives save/reload
+            ['risk-like', 'risk-impact', 'risk-rlike', 'risk-rimpact'].forEach(c => persistRiskSelect(tr.querySelector('.' + c)));
+
+            const band = (score) => {
+                if (score >= 15) return { cls: 'bg-red-200 text-red-800 border border-red-300', label: 'Critical' };
+                if (score >= 10) return { cls: 'bg-orange-100 text-orange-800 border border-orange-300', label: 'High' };
+                if (score >= 5)  return { cls: 'bg-yellow-100 text-yellow-800 border border-yellow-300', label: 'Medium' };
+                return { cls: 'bg-green-100 text-green-800 border border-green-300', label: 'Low' };
+            };
+
+            const setBadge = (spanCls, likeCls, impCls) => {
+                const span = tr.querySelector('.' + spanCls);
+                if (!span) return;
+                const l = parseInt(tr.querySelector('.' + likeCls) ? tr.querySelector('.' + likeCls).value : 0) || 0;
+                const i = parseInt(tr.querySelector('.' + impCls) ? tr.querySelector('.' + impCls).value : 0) || 0;
+                const score = l * i;
+                const b = band(score);
+                span.className = `${spanCls} inline-block px-2 py-1 rounded font-bold text-xs ${b.cls}`;
+                span.innerText = score ? `${score} · ${b.label}` : '';
+            };
+
+            setBadge('risk-score', 'risk-like', 'risk-impact');
+            setBadge('risk-rscore', 'risk-rlike', 'risk-rimpact');
         }
 
         function deleteRiskRow(btn) {
@@ -3543,6 +3809,169 @@
             disaggData[index][field] = value;
         }
 
+        // --- PIRS (Performance Indicator Reference Sheet) ---
+        // Pulls indicators from the Logframe (same logic as syncTracking) and
+        // lets the user document each indicator's reference details.
+        function syncPIRS() {
+            const logframeTable = document.querySelector('.logframe-table');
+            const pirsTbody = document.getElementById('pirs-tbody');
+            if (!logframeTable || !pirsTbody) return;
+
+            const colspanTotal = 14;
+            const DASH = '<span class="text-gray-300">–</span>';
+
+            // Make sure the Tracking table is built so we can pull values from it
+            if (typeof syncTracking === 'function') syncTracking();
+
+            // Build a lookup of Tracking values keyed the same way as the indicators
+            const trackingMap = {};
+            const disaggByParent = {};
+            const tkBody = document.getElementById('tracking-tbody');
+            const txt = (el) => el ? el.textContent.trim() : '';
+            const selText = (sel) => (sel && sel.options[sel.selectedIndex]) ? sel.options[sel.selectedIndex].text.trim() : '';
+            if (tkBody) {
+                tkBody.querySelectorAll('tr.disagg-row-track').forEach(d => {
+                    const pk = d.dataset.parentKey;
+                    const n = d.querySelector('.disagg-name');
+                    if (pk && n && n.textContent.trim()) {
+                        (disaggByParent[pk] = disaggByParent[pk] || []).push(n.textContent.trim());
+                    }
+                });
+                tkBody.querySelectorAll('tr.indicator-row-track').forEach(tr => {
+                    const k = tr.dataset.key;
+                    if (!k) return;
+                    trackingMap[k] = {
+                        unit: selText(tr.querySelector('.unit-type-selector')),
+                        baseline: txt(tr.querySelector('.track-baseline')),
+                        target: txt(tr.querySelector('.track-target')),
+                        resp: txt(tr.querySelector('.track-resp')),
+                        freq: selText(tr.querySelector('.track-frequency')),
+                        disagg: (disaggByParent[k] || []).join(', ')
+                    };
+                });
+            }
+
+            // Preserve PIRS-only (editable) fields by key so re-syncing never loses them
+            const existingData = {};
+            const html = (tr, sel) => tr.querySelector(sel) ? tr.querySelector(sel).innerHTML : '';
+            pirsTbody.querySelectorAll('tr.pirs-ind-row').forEach(tr => {
+                const key = tr.dataset.key;
+                if (key) {
+                    existingData[key] = {
+                        definition: html(tr, '.pirs-def'),
+                        rationale: html(tr, '.pirs-rationale'),
+                        source: html(tr, '.pirs-source'),
+                        method: html(tr, '.pirs-method'),
+                        calc: html(tr, '.pirs-calc'),
+                        limit: html(tr, '.pirs-limit')
+                    };
+                }
+            });
+
+            pirsTbody.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            let hasData = false;
+            let currentTypeBadge = '';
+
+            logframeTable.querySelectorAll('tr').forEach(row => {
+                const tbodies = document.querySelectorAll('.logframe-table tbody');
+                const tbodyIndex = Array.from(tbodies).indexOf(row.closest('tbody'));
+                if (tbodyIndex === 2 && currentNumLevels < 3) return;
+                if (tbodyIndex === 3 && currentNumLevels < 4) return;
+
+                const cell = row.cells[0];
+                if (!cell || !cell.classList.contains('editable-cell')) return;
+
+                const rawText = cell.textContent.trim();
+                const visibleHtml = cell.innerHTML;
+                if (!rawText) return;
+
+                let isHeader = false;
+                let indentClass = '';
+                let bgColor = '';
+                let typeKey = '';
+                let typeCls = '';
+
+                if (isGoalRow(rawText)) {
+                    indentClass = 'font-bold text-blue-900 pl-4'; bgColor = 'bg-blue-100'; isHeader = true;
+                    typeKey = 'pirs-type-impact'; typeCls = 'bg-blue-100 text-blue-800';
+                } else if (isOutputRow(rawText)) {
+                    indentClass = 'font-semibold text-blue-800 pl-16'; bgColor = 'bg-blue-50'; isHeader = true;
+                    typeKey = 'pirs-type-output'; typeCls = 'bg-amber-100 text-amber-800';
+                } else if (isPurposeRow(rawText)) {
+                    indentClass = 'font-bold text-gray-800 pl-10'; bgColor = 'bg-gray-200'; isHeader = true;
+                    typeKey = 'pirs-type-outcome'; typeCls = 'bg-green-100 text-green-800';
+                }
+
+                if (!isHeader) return;
+
+                // Remember the result level for indicators that fall under this header
+                currentTypeBadge = `<span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold ${typeCls}" data-i18n="${typeKey}">${dict[currentLang][typeKey] || dict['en'][typeKey] || ''}</span>`;
+
+                // Hierarchy header row (Goal / Purpose / Output)
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = visibleHtml;
+                const btnDiv = tempDiv.querySelector('.absolute.top-1.right-1');
+                if (btnDiv) btnDiv.remove();
+
+                const trHeader = document.createElement('tr');
+                trHeader.className = bgColor;
+                trHeader.innerHTML = `
+                    <td class="p-0 border-r" colspan="${colspanTotal}">
+                        <div class="sticky left-0 inline-block px-4 py-2 w-fit max-w-[90vw] ${indentClass}">
+                            ${tempDiv.innerHTML}
+                        </div>
+                    </td>
+                `;
+                frag.appendChild(trHeader);
+
+                // Indicator rows under this header
+                const indCell = row.querySelector('.col-lf-ind');
+                if (indCell) {
+                    const typeBadge = currentTypeBadge;
+                    indCell.querySelectorAll('.list-item').forEach(item => {
+                        const rawIndText = item.textContent.trim();
+                        const visibleIndHtml = item.innerHTML;
+                        if (!rawIndText) return;
+
+                        // Key matches syncTracking so the same indicator is recognisable across tabs
+                        const dataKey = rawText.substring(0, 50).replace(/\s/g, '') + '_' + rawIndText.substring(0, 50).replace(/\s/g, '');
+                        const prev = existingData[dataKey] || { definition: '', rationale: '', source: '', method: '', calc: '', limit: '' };
+                        const tk = trackingMap[dataKey] || {};
+                        const auto = (v) => (v && v !== '') ? v : DASH;
+
+                        const trInd = document.createElement('tr');
+                        trInd.className = 'border-b hover:bg-gray-50 transition-colors pirs-ind-row bg-white';
+                        trInd.dataset.key = dataKey;
+                        trInd.innerHTML = `
+                            <td class="px-4 py-2 border-r pl-24 text-gray-700 sticky-col inherit-bg">${visibleIndHtml}</td>
+                            <td class="px-3 py-2 border-r text-center bg-indigo-50/40 pirs-type">${typeBadge}</td>
+                            <td class="px-4 py-2 border-r editable-cell pirs-def" contenteditable="true">${prev.definition}</td>
+                            <td class="px-4 py-2 border-r editable-cell pirs-rationale" contenteditable="true">${prev.rationale}</td>
+                            <td class="px-4 py-2 border-r editable-cell pirs-source" contenteditable="true">${prev.source}</td>
+                            <td class="px-4 py-2 border-r editable-cell pirs-method" contenteditable="true">${prev.method}</td>
+                            <td class="px-4 py-2 border-r editable-cell pirs-calc" contenteditable="true">${prev.calc}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-unit">${auto(tk.unit)}</td>
+                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 pirs-disagg">${auto(tk.disagg)}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-baseline">${auto(tk.baseline)}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-target">${auto(tk.target)}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-period">${auto(tk.freq)}</td>
+                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 pirs-resp">${auto(tk.resp)}</td>
+                            <td class="px-4 py-2 editable-cell pirs-limit" contenteditable="true">${prev.limit}</td>
+                        `;
+                        frag.appendChild(trInd);
+                        hasData = true;
+                    });
+                }
+            });
+
+            pirsTbody.appendChild(frag);
+
+            if (!hasData) {
+                pirsTbody.innerHTML = `<tr><td colspan="${colspanTotal}" class="text-center py-6 text-gray-500 italic">ບໍ່ມີຂໍ້ມູນຕົວຊີ້ວັດ ກະລຸນາເພີ່ມໃນ Logframe ກ່ອນ...</td></tr>`;
+            }
+        }
+
         // Global Bindings for HTML onclick listeners
         window.setLanguage = setLanguage;
         window.saveAsHTML = saveAsHTML;
@@ -3569,6 +3998,7 @@
         window.drawGantt = drawGantt;
         window.syncBudget = syncBudget;
         window.syncTracking = syncTracking;
+        window.syncPIRS = syncPIRS;
         window.calcProgress = calcProgress;
         window.updateCustomHeader = updateCustomHeader;
         window.openExportModal = openExportModal;
@@ -3593,6 +4023,8 @@
         window.hideYear = hideYear;
         window.unhideAllYears = unhideAllYears;
         window.addRiskRow = addRiskRow;
+        window.calcRiskScore = calcRiskScore;
+        window.persistRiskSelect = persistRiskSelect;
         window.deleteRiskRow = deleteRiskRow;
         window.updateRiskColor = updateRiskColor;
         window.renderDisaggSettings = renderDisaggSettings;
