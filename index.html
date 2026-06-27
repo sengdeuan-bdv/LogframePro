@@ -692,6 +692,14 @@
             <div class="flex justify-between items-end mb-4 border-b pb-2 shrink-0 bg-white">
                 <div class="flex items-center gap-4">
                     <h2 class="text-2xl font-bold text-gray-800" data-i18n="tab-pirs-title">Performance Indicator Reference Sheet (PIRS)</h2>
+                    <div class="flex gap-2">
+                        <button id="btn-unhide-pirs-cols" onclick="unhideColumns('pirs')" class="hidden bg-yellow-50 text-yellow-600 border border-yellow-200 px-3 py-1.5 rounded hover:bg-yellow-100 transition-colors shadow-sm text-sm font-medium hide-on-export">
+                            <i class="fas fa-columns mr-1"></i> <span data-i18n="btn-show-cols">Show Columns</span>
+                        </button>
+                        <button id="btn-unhide-pirs-rows" onclick="unhideRows('pirs')" class="hidden bg-yellow-50 text-yellow-600 border border-yellow-200 px-3 py-1.5 rounded hover:bg-yellow-100 transition-colors shadow-sm text-sm font-medium hide-on-export">
+                            <i class="fas fa-eye mr-1"></i> <span data-i18n="btn-show-rows">Show Rows</span>
+                        </button>
+                    </div>
                 </div>
                 <button onclick="syncPIRS()" class="bg-teal-50 text-teal-600 border border-teal-200 px-3 py-1.5 rounded hover:bg-teal-100 transition-colors shadow-sm text-sm font-medium hide-on-export">
                     <i class="fas fa-sync-alt mr-1"></i> <span data-i18n="btn-sync">Sync from Logframe</span>
@@ -707,19 +715,19 @@
                     <thead class="bg-teal-50 border-b">
                         <tr>
                             <th class="px-4 py-3 font-semibold text-gray-700 border-r w-1/4 min-w-[240px] sticky-col inherit-bg" data-i18n="th-hierarchy">Hierarchy / Indicator</th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[110px] text-center bg-indigo-50" title="Auto from Logframe"><i class="fas fa-lock text-[9px] text-indigo-400 mr-1"></i><span data-i18n="th-pirs-type">Type / Level</span></th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[200px]" data-i18n="th-pirs-def">Indicator Definition</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[180px]" data-i18n="th-pirs-rationale">Rationale / Use</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[160px]" data-i18n="th-pirs-source">Data Source</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[170px]" data-i18n="th-pirs-method">Data Collection Method</th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[190px]" data-i18n="th-pirs-calc">How Calculation</th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-unit">Unit</span></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[140px] bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-disagg">Disaggregation</span></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-baseline">Baseline</span></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-target">Target</span></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-period">Frequency / Report Period</span></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[130px] bg-purple-50" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-resp">Responsibility</span></th>
-                            <th class="px-4 py-3 font-semibold text-gray-700 min-w-[170px]" data-i18n="th-pirs-limit">Data Limitations / DQA</th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[110px] text-center bg-indigo-50 col-pirs-type group/th relative" title="Auto from Logframe"><i class="fas fa-lock text-[9px] text-indigo-400 mr-1"></i><span data-i18n="th-pirs-type">Type / Level</span><button onclick="hideColumn('col-pirs-type')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[200px] col-pirs-def group/th relative"><span data-i18n="th-pirs-def">Indicator Definition</span><button onclick="hideColumn('col-pirs-def')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[180px] col-pirs-rationale group/th relative"><span data-i18n="th-pirs-rationale">Rationale / Use</span><button onclick="hideColumn('col-pirs-rationale')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[160px] col-pirs-source group/th relative"><span data-i18n="th-pirs-source">Data Source</span><button onclick="hideColumn('col-pirs-source')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[170px] col-pirs-method group/th relative"><span data-i18n="th-pirs-method">Data Collection Method</span><button onclick="hideColumn('col-pirs-method')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[190px] col-pirs-calc group/th relative"><span data-i18n="th-pirs-calc">How Calculation</span><button onclick="hideColumn('col-pirs-calc')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50 col-pirs-unit group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-unit">Unit</span><button onclick="hideColumn('col-pirs-unit')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[140px] bg-purple-50 col-pirs-disagg group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-disagg">Disaggregation</span><button onclick="hideColumn('col-pirs-disagg')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50 col-pirs-baseline group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-baseline">Baseline</span><button onclick="hideColumn('col-pirs-baseline')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50 col-pirs-target group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-target">Target</span><button onclick="hideColumn('col-pirs-target')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-purple-50 col-pirs-period group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-period">Frequency / Report Period</span><button onclick="hideColumn('col-pirs-period')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[130px] bg-purple-50 col-pirs-resp group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-resp">Responsibility</span><button onclick="hideColumn('col-pirs-resp')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-4 py-3 font-semibold text-gray-700 min-w-[170px] col-pirs-limit group/th relative"><span data-i18n="th-pirs-limit">Data Limitations / DQA</span><button onclick="hideColumn('col-pirs-limit')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                         </tr>
                     </thead>
                     <tbody id="pirs-tbody" class="divide-y"></tbody>
@@ -996,7 +1004,7 @@
                 'opt-levels-3': '3 Levels (Goals, Purposes, Outputs)',
                 'opt-levels-2': '2 Levels (Goals, Purposes)',
                 'lbl-chart-budget': 'Budget Distribution', 'lbl-chart-progress': 'Indicators Progress Overview',
-                'btn-show-rows': 'Show Hidden Rows',
+                'btn-show-rows': 'Show Hidden Rows', 'btn-show-cols': 'Show Columns',
                 'btn-add-disagg-row': 'Disaggregation',
                 'lbl-disagg-title': 'Disaggregation Categories',
                 'desc-disagg': 'Define categories for data disaggregation (e.g., Gender, Location, Ethnicity) and their respective options. Separate options with commas.',
@@ -1055,7 +1063,7 @@
                 'opt-levels-3': '3 ລະດັບ (ເປົ້າໝາຍ, ຈຸດປະສົງ, ຜົນໄດ້ຮັບ)',
                 'opt-levels-2': '2 ລະດັບ (ເປົ້າໝາຍ, ຈຸດປະສົງ)',
                 'lbl-chart-budget': 'ສັດສ່ວນງົບປະມານຕາມກິດຈະກຳ', 'lbl-chart-progress': 'ພາບລວມຄວາມຄືບໜ້າຕົວຊີ້ວັດ',
-                'btn-show-rows': 'ສະແດງແຖວທີ່ຊ່ອນ',
+                'btn-show-rows': 'ສະແດງແຖວທີ່ຊ່ອນ', 'btn-show-cols': 'ສະແດງຖັນທີ່ຊ່ອນ',
                 'btn-add-disagg-row': 'ແຍກຍ່ອຍ',
                 'lbl-disagg-title': 'ຖານຂໍ້ມູນ ການແຍກແຍະຕົວຊີ້ວັດ (Disaggregation)',
                 'desc-disagg': 'ກຳນົດໝວດໝູ່ສຳລັບການແຍກແຍະຂໍ້ມູນ (ຕົວຢ່າງ: ເພດ, ສະຖານທີ່, ຊົນເຜົ່າ, ກຸ່ມອາຍຸ) ແລະ ຕົວເລືອກຕ່າງໆ ໂດຍໃຊ້ໝາຍຈຸດ (,) ຂັ້ນລະຫວ່າງຕົວເລືອກ.',
@@ -1416,6 +1424,7 @@
             if(activeTab === 'tab-planning') document.getElementById('btn-unhide-pl-cols').classList.remove('hidden');
             if(activeTab === 'tab-budget') document.getElementById('btn-unhide-bg-cols').classList.remove('hidden');
             if(activeTab === 'tab-tracking') document.getElementById('btn-unhide-tk-cols').classList.remove('hidden');
+            if(activeTab === 'tab-pirs') document.getElementById('btn-unhide-pirs-cols').classList.remove('hidden');
         }
 
         function unhideColumns(tabPrefix) {
@@ -1431,6 +1440,9 @@
             } else if(tabPrefix === 'tk') {
                 document.querySelectorAll('.col-tk-unit, .col-tk-freq, .col-tk-resp, .col-tk-base, .col-tk-tgt, .col-tk-act, .col-tk-prog, .col-tk-stat').forEach(el => el.classList.remove('hidden'));
                 document.getElementById('btn-unhide-tk-cols').classList.add('hidden');
+            } else if(tabPrefix === 'pirs') {
+                document.querySelectorAll('.col-pirs-type, .col-pirs-def, .col-pirs-rationale, .col-pirs-source, .col-pirs-method, .col-pirs-calc, .col-pirs-unit, .col-pirs-disagg, .col-pirs-baseline, .col-pirs-target, .col-pirs-period, .col-pirs-resp, .col-pirs-limit').forEach(el => el.classList.remove('hidden'));
+                document.getElementById('btn-unhide-pirs-cols').classList.add('hidden');
             }
         }
 
@@ -1441,10 +1453,12 @@
             if(activeTab === 'tab-logframe') document.getElementById('btn-unhide-lf-rows').classList.remove('hidden');
             if(activeTab === 'tab-planning') document.getElementById('btn-unhide-pl-rows').classList.remove('hidden');
             if(activeTab === 'tab-budget') document.getElementById('btn-unhide-bg-rows').classList.remove('hidden');
+            if(activeTab === 'tab-pirs') document.getElementById('btn-unhide-pirs-rows').classList.remove('hidden');
         }
 
         function unhideRows(tabPrefix) {
-            const activeTabId = tabPrefix === 'lf' ? 'tab-logframe' : (tabPrefix === 'pl' ? 'tab-planning' : 'tab-budget');
+            const tabMap = { lf: 'tab-logframe', pl: 'tab-planning', bg: 'tab-budget', pirs: 'tab-pirs' };
+            const activeTabId = tabMap[tabPrefix] || 'tab-budget';
             const activeTab = document.getElementById(activeTabId);
             activeTab.querySelectorAll('.user-hidden').forEach(el => el.classList.remove('user-hidden'));
             document.getElementById(`btn-unhide-${tabPrefix}-rows`).classList.add('hidden');
@@ -2791,6 +2805,7 @@
                 const tbodyIndex = Array.from(tbodies).indexOf(row.closest('tbody'));
                 if (tbodyIndex === 2 && currentNumLevels < 3) return;
                 if (tbodyIndex === 3 && currentNumLevels < 4) return;
+                if (row.classList.contains('blue-ribbon')) return; // skip duplicate ribbon copies
 
                 const cell = row.cells[0];
                 if(!cell || !cell.classList.contains('editable-cell')) return;
@@ -2956,6 +2971,7 @@
                 const tbodyIndex = Array.from(tbodies).indexOf(row.closest('tbody'));
                 if (tbodyIndex === 2 && currentNumLevels < 3) return;
                 if (tbodyIndex === 3 && currentNumLevels < 4) return;
+                if (row.classList.contains('blue-ribbon')) return; // skip duplicate ribbon copies
 
                 const cell = row.cells[0];
                 if(!cell || !cell.classList.contains('editable-cell')) return;
@@ -3349,6 +3365,7 @@
                 const tbodyIndex = Array.from(tbodies).indexOf(row.closest('tbody'));
                 if (tbodyIndex === 2 && currentNumLevels < 3) return;
                 if (tbodyIndex === 3 && currentNumLevels < 4) return;
+                if (row.classList.contains('blue-ribbon')) return; // skip duplicate ribbon copies
 
                 const cell = row.cells[0];
                 if (!cell || !cell.classList.contains('editable-cell')) return;
@@ -3868,6 +3885,19 @@
                 }
             });
 
+            // Keep hidden columns hidden after a re-sync (read state from the headers)
+            const colIsHidden = (suffix) => {
+                const th = document.querySelector('.pirs-table th.col-pirs-' + suffix);
+                return th && th.classList.contains('hidden') ? 'hidden' : '';
+            };
+            const hCol = {
+                type: colIsHidden('type'), def: colIsHidden('def'), rationale: colIsHidden('rationale'),
+                source: colIsHidden('source'), method: colIsHidden('method'), calc: colIsHidden('calc'),
+                unit: colIsHidden('unit'), disagg: colIsHidden('disagg'), baseline: colIsHidden('baseline'),
+                target: colIsHidden('target'), period: colIsHidden('period'), resp: colIsHidden('resp'),
+                limit: colIsHidden('limit')
+            };
+
             pirsTbody.innerHTML = '';
             const frag = document.createDocumentFragment();
             let hasData = false;
@@ -3878,6 +3908,7 @@
                 const tbodyIndex = Array.from(tbodies).indexOf(row.closest('tbody'));
                 if (tbodyIndex === 2 && currentNumLevels < 3) return;
                 if (tbodyIndex === 3 && currentNumLevels < 4) return;
+                if (row.classList.contains('blue-ribbon')) return; // skip duplicate ribbon copies
 
                 const cell = row.cells[0];
                 if (!cell || !cell.classList.contains('editable-cell')) return;
@@ -3944,20 +3975,23 @@
                         trInd.className = 'border-b hover:bg-gray-50 transition-colors pirs-ind-row bg-white';
                         trInd.dataset.key = dataKey;
                         trInd.innerHTML = `
-                            <td class="px-4 py-2 border-r pl-24 text-gray-700 sticky-col inherit-bg">${visibleIndHtml}</td>
-                            <td class="px-3 py-2 border-r text-center bg-indigo-50/40 pirs-type">${typeBadge}</td>
-                            <td class="px-4 py-2 border-r editable-cell pirs-def" contenteditable="true">${prev.definition}</td>
-                            <td class="px-4 py-2 border-r editable-cell pirs-rationale" contenteditable="true">${prev.rationale}</td>
-                            <td class="px-4 py-2 border-r editable-cell pirs-source" contenteditable="true">${prev.source}</td>
-                            <td class="px-4 py-2 border-r editable-cell pirs-method" contenteditable="true">${prev.method}</td>
-                            <td class="px-4 py-2 border-r editable-cell pirs-calc" contenteditable="true">${prev.calc}</td>
-                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-unit">${auto(tk.unit)}</td>
-                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 pirs-disagg">${auto(tk.disagg)}</td>
-                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-baseline">${auto(tk.baseline)}</td>
-                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-target">${auto(tk.target)}</td>
-                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 pirs-period">${auto(tk.freq)}</td>
-                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 pirs-resp">${auto(tk.resp)}</td>
-                            <td class="px-4 py-2 editable-cell pirs-limit" contenteditable="true">${prev.limit}</td>
+                            <td class="px-4 py-2 border-r pl-24 text-gray-700 sticky-col inherit-bg relative group/row">
+                                <button onclick="hideRow(this)" class="absolute left-1 top-2 text-gray-400 hover:text-blue-600 opacity-0 group-hover/row:opacity-100 transition-opacity hide-on-export z-10" title="Hide Row"><i class="fas fa-eye-slash text-[10px]"></i></button>
+                                ${visibleIndHtml}
+                            </td>
+                            <td class="px-3 py-2 border-r text-center bg-indigo-50/40 col-pirs-type ${hCol.type}">${typeBadge}</td>
+                            <td class="px-4 py-2 border-r editable-cell col-pirs-def ${hCol.def}" contenteditable="true">${prev.definition}</td>
+                            <td class="px-4 py-2 border-r editable-cell col-pirs-rationale ${hCol.rationale}" contenteditable="true">${prev.rationale}</td>
+                            <td class="px-4 py-2 border-r editable-cell col-pirs-source ${hCol.source}" contenteditable="true">${prev.source}</td>
+                            <td class="px-4 py-2 border-r editable-cell col-pirs-method ${hCol.method}" contenteditable="true">${prev.method}</td>
+                            <td class="px-4 py-2 border-r editable-cell col-pirs-calc ${hCol.calc}" contenteditable="true">${prev.calc}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-unit ${hCol.unit}">${auto(tk.unit)}</td>
+                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 col-pirs-disagg ${hCol.disagg}">${auto(tk.disagg)}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-baseline ${hCol.baseline}">${auto(tk.baseline)}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-target ${hCol.target}">${auto(tk.target)}</td>
+                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-period ${hCol.period}">${auto(tk.freq)}</td>
+                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 col-pirs-resp ${hCol.resp}">${auto(tk.resp)}</td>
+                            <td class="px-4 py-2 editable-cell col-pirs-limit ${hCol.limit}" contenteditable="true">${prev.limit}</td>
                         `;
                         frag.appendChild(trInd);
                         hasData = true;
