@@ -179,12 +179,12 @@
                 <button onclick="switchTab('risk')" id="btn-risk" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
                     <i class="fas fa-exclamation-triangle text-orange-500 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-risk">Risk</span>
                 </button>
-                <button onclick="switchTab('tracking')" id="btn-tracking" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
-                    <i class="fas fa-chart-line text-purple-600 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-tracking">Tracking</span>
-                </button>
-                <!-- NEW PIRS TAB BUTTON -->
+                <!-- PIRS TAB BUTTON (placed before Tracking) -->
                 <button onclick="switchTab('pirs')" id="btn-pirs" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
                     <i class="fas fa-clipboard-list text-teal-600 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-pirs">PIRS</span>
+                </button>
+                <button onclick="switchTab('tracking')" id="btn-tracking" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent">
+                    <i class="fas fa-chart-line text-purple-600 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-tracking">Tracking</span>
                 </button>
                 <button onclick="switchTab('settings')" id="btn-settings" class="tab-btn flex flex-col items-center justify-center p-2 rounded hover:bg-blue-100 min-w-[70px] border border-transparent ml-2 border-l-2">
                     <i class="fas fa-cog text-gray-500 text-xl mb-1"></i> <span class="text-xs font-medium text-gray-700" data-i18n="tab-settings">Settings</span>
@@ -721,12 +721,12 @@
                             <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[160px] col-pirs-source group/th relative"><span data-i18n="th-pirs-source">Data Source</span><button onclick="hideColumn('col-pirs-source')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                             <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[170px] col-pirs-method group/th relative"><span data-i18n="th-pirs-method">Data Collection Method</span><button onclick="hideColumn('col-pirs-method')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                             <th class="px-4 py-3 font-semibold text-gray-700 border-r min-w-[190px] col-pirs-calc group/th relative"><span data-i18n="th-pirs-calc">How Calculation</span><button onclick="hideColumn('col-pirs-calc')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50 col-pirs-unit group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-unit">Unit</span><button onclick="hideColumn('col-pirs-unit')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center col-pirs-unit group/th relative"><span data-i18n="th-pirs-unit">Unit</span><button onclick="hideColumn('col-pirs-unit')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                             <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[140px] bg-purple-50 col-pirs-disagg group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-disagg">Disaggregation</span><button onclick="hideColumn('col-pirs-disagg')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                             <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50 col-pirs-baseline group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-baseline">Baseline</span><button onclick="hideColumn('col-pirs-baseline')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                             <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[90px] text-center bg-purple-50 col-pirs-target group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-target">Target</span><button onclick="hideColumn('col-pirs-target')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center bg-purple-50 col-pirs-period group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-period">Frequency / Report Period</span><button onclick="hideColumn('col-pirs-period')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
-                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[130px] bg-purple-50 col-pirs-resp group/th relative" title="Auto from Tracking"><i class="fas fa-lock text-[9px] text-purple-400 mr-1"></i><span data-i18n="th-pirs-resp">Responsibility</span><button onclick="hideColumn('col-pirs-resp')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[120px] text-center col-pirs-period group/th relative"><span data-i18n="th-pirs-period">Frequency / Report Period</span><button onclick="hideColumn('col-pirs-period')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
+                            <th class="px-3 py-3 font-semibold text-gray-700 border-r min-w-[130px] col-pirs-resp group/th relative"><span data-i18n="th-pirs-resp">Responsibility</span><button onclick="hideColumn('col-pirs-resp')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                             <th class="px-4 py-3 font-semibold text-gray-700 min-w-[170px] col-pirs-limit group/th relative"><span data-i18n="th-pirs-limit">Data Limitations / DQA</span><button onclick="hideColumn('col-pirs-limit')" class="absolute top-1 right-1 text-gray-400 hover:text-blue-600 opacity-0 group-hover/th:opacity-100 transition-opacity cursor-pointer hide-on-export"><i class="fas fa-eye-slash text-[10px]"></i></button></th>
                         </tr>
                     </thead>
@@ -1530,7 +1530,7 @@
             container.appendChild(style);
 
             const tabsToExport = scope === 'all' 
-                ? ['tab-project', 'tab-logframe', 'tab-planning', 'tab-budget', 'tab-risk', 'tab-tracking', 'tab-pirs']
+                ? ['tab-project', 'tab-logframe', 'tab-planning', 'tab-budget', 'tab-risk', 'tab-pirs', 'tab-tracking']
                 : [document.querySelector('.tab-content:not(.hidden)').id];
 
             tabsToExport.forEach((tabId, index) => {
@@ -1986,8 +1986,10 @@
             if (tabId === 'dashboard') syncDashboard();
             if (tabId === 'planning') syncPlanningFromLogframe();
             if (tabId === 'budget') syncBudget();
-            if (tabId === 'tracking') syncTracking();
-            if (tabId === 'pirs') syncPIRS();
+            // PIRS owns Unit/Freq/Resp; Tracking owns Baseline/Target/actuals.
+            // Build the dependency (other table) first, then the visible one — no recursion.
+            if (tabId === 'tracking') { syncPIRS(); syncTracking(); }
+            if (tabId === 'pirs') { syncTracking(); syncPIRS(); }
         }
 
         let budgetChartInstance = null;
@@ -3294,6 +3296,21 @@
             const hideProg = isHidden('.col-tk-prog') ? 'hidden' : '';
             const hideStat = isHidden('.col-tk-stat') ? 'hidden' : '';
 
+            // Unit / Frequency / Responsibility are now OWNED by PIRS — pull them read-only.
+            const pirsMap = {};
+            const pBody = document.getElementById('pirs-tbody');
+            if (pBody) {
+                pBody.querySelectorAll('tr.pirs-ind-row').forEach(r => {
+                    const k = r.dataset.key;
+                    if (!k) return;
+                    pirsMap[k] = {
+                        unit: r.querySelector('.pirs-unit-select') ? r.querySelector('.pirs-unit-select').value : '',
+                        freq: r.querySelector('.pirs-freq-select') ? r.querySelector('.pirs-freq-select').value : '',
+                        resp: r.querySelector('.pirs-resp') ? r.querySelector('.pirs-resp').innerText.trim() : ''
+                    };
+                });
+            }
+
             const existingData = {};
             let currentIndKey = null;
 
@@ -3414,6 +3431,12 @@
                                 const dataKey = rawText.substring(0, 50).replace(/\s/g, '') + '_' + rawIndText.substring(0, 50).replace(/\s/g, '');
                                 const prev = existingData[dataKey] || { unitType: 'num', frequency: 'yearly', responsible: '', baseline: '', target: '', actual: '', progress: '-', progressClass: 'px-4 py-2 border-r text-center font-bold text-gray-400 track-progress', status: 'active', notes: '<div class="en-text"></div><div class="lao-text"></div>', yearly: [], disaggregations: [] };
 
+                                // Unit/Freq/Resp come from PIRS; fall back to existing tracking data
+                                const pm = pirsMap[dataKey] || {};
+                                const effUnit = pm.unit || prev.unitType || 'num';
+                                const effFreq = pm.freq || prev.frequency || 'yearly';
+                                const effResp = pm.resp || prev.responsible || '';
+
                                 let yearlyCellsHtml = '';
                                 for(let i=0; i<trackingYearCount; i++) {
                                     const yD = prev.yearly[i] || {target: '', actual: '', notes: ''};
@@ -3445,28 +3468,28 @@
                                         </div>
                                     </td>
                                     <td class="px-2 py-2 border-r text-center align-middle bg-gray-50 col-tk-unit ${hideUnit}">
-                                        <select class="unit-type-selector text-xs bg-white border border-gray-300 rounded p-1 text-gray-700 outline-none focus:border-blue-400 cursor-pointer w-full" onchange="changeUnitType(this)">
-                                            <option value="num" ${prev.unitType === 'num' ? 'selected' : ''}>#</option>
-                                            <option value="pct" ${prev.unitType === 'pct' ? 'selected' : ''}>%</option>
-                                            <option value="rate" ${prev.unitType === 'rate' ? 'selected' : ''}>ອັດຕາ (:)</option>
-                                            <option value="person" ${prev.unitType === 'person' ? 'selected' : ''}>ຄົນ</option>
-                                            <option value="family" ${prev.unitType === 'family' ? 'selected' : ''}>ຄອບຄົວ</option>
-                                            <option value="village" ${prev.unitType === 'village' ? 'selected' : ''}>ບ້ານ</option>
-                                            <option value="school" ${prev.unitType === 'school' ? 'selected' : ''}>ໂຮງຮຽນ</option>
-                                            <option value="time" ${prev.unitType === 'time' ? 'selected' : ''}>ຄັ້ງ</option>
-                                            <option value="course" ${prev.unitType === 'course' ? 'selected' : ''}>ຊຸດ</option>
-                                            <option value="doc" ${prev.unitType === 'doc' ? 'selected' : ''}>ສະບັບ</option>
+                                        <select disabled title="ກຳນົດທີ່ PIRS / Set in PIRS" class="unit-type-selector text-xs bg-gray-100 text-gray-500 border border-gray-300 rounded p-1 cursor-not-allowed w-full" onchange="changeUnitType(this)">
+                                            <option value="num" ${effUnit === 'num' ? 'selected' : ''}>#</option>
+                                            <option value="pct" ${effUnit === 'pct' ? 'selected' : ''}>%</option>
+                                            <option value="rate" ${effUnit === 'rate' ? 'selected' : ''}>ອັດຕາ (:)</option>
+                                            <option value="person" ${effUnit === 'person' ? 'selected' : ''}>ຄົນ</option>
+                                            <option value="family" ${effUnit === 'family' ? 'selected' : ''}>ຄອບຄົວ</option>
+                                            <option value="village" ${effUnit === 'village' ? 'selected' : ''}>ບ້ານ</option>
+                                            <option value="school" ${effUnit === 'school' ? 'selected' : ''}>ໂຮງຮຽນ</option>
+                                            <option value="time" ${effUnit === 'time' ? 'selected' : ''}>ຄັ້ງ</option>
+                                            <option value="course" ${effUnit === 'course' ? 'selected' : ''}>ຊຸດ</option>
+                                            <option value="doc" ${effUnit === 'doc' ? 'selected' : ''}>ສະບັບ</option>
                                         </select>
                                     </td>
                                     <td class="px-2 py-2 border-r text-center align-middle bg-gray-50 col-tk-freq ${hideFreq}">
-                                        <select class="track-frequency text-[11px] bg-white border border-gray-300 rounded p-1 text-gray-700 outline-none focus:border-blue-400 cursor-pointer w-full" onchange="updateFrequency(this)">
-                                            <option value="monthly" ${prev.frequency === 'monthly' ? 'selected' : ''}>Monthly</option>
-                                            <option value="quarterly" ${prev.frequency === 'quarterly' ? 'selected' : ''}>Quarterly</option>
-                                            <option value="yearly" ${prev.frequency === 'yearly' ? 'selected' : ''}>Yearly</option>
-                                            <option value="end" ${prev.frequency === 'end' ? 'selected' : ''}>End of Project</option>
+                                        <select disabled title="ກຳນົດທີ່ PIRS / Set in PIRS" class="track-frequency text-[11px] bg-gray-100 text-gray-500 border border-gray-300 rounded p-1 cursor-not-allowed w-full" onchange="updateFrequency(this)">
+                                            <option value="monthly" ${effFreq === 'monthly' ? 'selected' : ''}>Monthly</option>
+                                            <option value="quarterly" ${effFreq === 'quarterly' ? 'selected' : ''}>Quarterly</option>
+                                            <option value="yearly" ${effFreq === 'yearly' ? 'selected' : ''}>Yearly</option>
+                                            <option value="end" ${effFreq === 'end' ? 'selected' : ''}>End of Project</option>
                                         </select>
                                     </td>
-                                    <td class="px-4 py-2 border-r text-center editable-cell track-resp col-tk-resp ${hideResp}" contenteditable="true">${prev.responsible}</td>
+                                    <td class="px-4 py-2 border-r text-center track-resp col-tk-resp bg-gray-50 text-gray-500 ${hideResp}" contenteditable="false" title="ກຳນົດທີ່ PIRS / Set in PIRS">${effResp}</td>
                                     <td class="px-4 py-2 border-r text-center editable-cell track-baseline format-num col-tk-base ${hideBase}" contenteditable="true" onblur="formatUnit(this)">${prev.baseline}</td>
                                     <td class="px-4 py-2 border-r text-center editable-cell track-target format-num font-bold bg-purple-50/50 col-tk-tgt ${hideTgt}" contenteditable="true" oninput="calcProgress(this)" onblur="formatUnit(this)">${prev.target}</td>
                                     ${yearlyCellsHtml}
@@ -3827,8 +3850,13 @@
         }
 
         // --- PIRS (Performance Indicator Reference Sheet) ---
-        // Pulls indicators from the Logframe (same logic as syncTracking) and
-        // lets the user document each indicator's reference details.
+        // PIRS is the master definition sheet (placed before Tracking). It OWNS
+        // Unit, Frequency and Responsibility; Tracking pulls those from here.
+        // It still reads Baseline / Target / Disaggregation from Tracking (read-only).
+        const PIRS_UNIT_OPTS = [['num','#'],['pct','%'],['rate','ອັດຕາ (:)'],['person','ຄົນ'],['family','ຄອບຄົວ'],['village','ບ້ານ'],['school','ໂຮງຮຽນ'],['time','ຄັ້ງ'],['course','ຊຸດ'],['doc','ສະບັບ']];
+        const PIRS_FREQ_OPTS = [['monthly','Monthly'],['quarterly','Quarterly'],['yearly','Yearly'],['end','End of Project']];
+        const pirsSel = (cls, opts, val) => `<select class="text-xs border border-gray-300 rounded p-1 w-full bg-white cursor-pointer ${cls}" onchange="persistRiskSelect(this)">${opts.map(o => `<option value="${o[0]}" ${o[0] === val ? 'selected' : ''}>${o[1]}</option>`).join('')}</select>`;
+
         function syncPIRS() {
             const logframeTable = document.querySelector('.logframe-table');
             const pirsTbody = document.getElementById('pirs-tbody');
@@ -3837,15 +3865,13 @@
             const colspanTotal = 14;
             const DASH = '<span class="text-gray-300">–</span>';
 
-            // Make sure the Tracking table is built so we can pull values from it
-            if (typeof syncTracking === 'function') syncTracking();
-
-            // Build a lookup of Tracking values keyed the same way as the indicators
+            // Read Tracking DOM (no rebuild → no recursion) for fields Tracking still owns:
+            // Baseline, Target, Disaggregation. Also grab Unit/Freq/Resp once as a migration
+            // fallback so existing Tracking data is inherited the first time PIRS takes over.
             const trackingMap = {};
             const disaggByParent = {};
             const tkBody = document.getElementById('tracking-tbody');
             const txt = (el) => el ? el.textContent.trim() : '';
-            const selText = (sel) => (sel && sel.options[sel.selectedIndex]) ? sel.options[sel.selectedIndex].text.trim() : '';
             if (tkBody) {
                 tkBody.querySelectorAll('tr.disagg-row-track').forEach(d => {
                     const pk = d.dataset.parentKey;
@@ -3858,12 +3884,12 @@
                     const k = tr.dataset.key;
                     if (!k) return;
                     trackingMap[k] = {
-                        unit: selText(tr.querySelector('.unit-type-selector')),
                         baseline: txt(tr.querySelector('.track-baseline')),
                         target: txt(tr.querySelector('.track-target')),
-                        resp: txt(tr.querySelector('.track-resp')),
-                        freq: selText(tr.querySelector('.track-frequency')),
-                        disagg: (disaggByParent[k] || []).join(', ')
+                        disagg: (disaggByParent[k] || []).join(', '),
+                        unitVal: tr.querySelector('.unit-type-selector') ? tr.querySelector('.unit-type-selector').value : '',
+                        freqVal: tr.querySelector('.track-frequency') ? tr.querySelector('.track-frequency').value : '',
+                        respText: txt(tr.querySelector('.track-resp'))
                     };
                 });
             }
@@ -3880,7 +3906,10 @@
                         source: html(tr, '.pirs-source'),
                         method: html(tr, '.pirs-method'),
                         calc: html(tr, '.pirs-calc'),
-                        limit: html(tr, '.pirs-limit')
+                        limit: html(tr, '.pirs-limit'),
+                        unit: tr.querySelector('.pirs-unit-select') ? tr.querySelector('.pirs-unit-select').value : '',
+                        freq: tr.querySelector('.pirs-freq-select') ? tr.querySelector('.pirs-freq-select').value : '',
+                        resp: html(tr, '.pirs-resp')
                     };
                 }
             });
@@ -3967,9 +3996,13 @@
 
                         // Key matches syncTracking so the same indicator is recognisable across tabs
                         const dataKey = rawText.substring(0, 50).replace(/\s/g, '') + '_' + rawIndText.substring(0, 50).replace(/\s/g, '');
-                        const prev = existingData[dataKey] || { definition: '', rationale: '', source: '', method: '', calc: '', limit: '' };
+                        const prev = existingData[dataKey] || { definition: '', rationale: '', source: '', method: '', calc: '', limit: '', unit: '', freq: '', resp: '' };
                         const tk = trackingMap[dataKey] || {};
                         const auto = (v) => (v && v !== '') ? v : DASH;
+                        // PIRS owns Unit/Freq/Resp; inherit from Tracking only on first migration
+                        const unitVal = prev.unit || tk.unitVal || 'num';
+                        const freqVal = prev.freq || tk.freqVal || 'yearly';
+                        const respVal = prev.resp || tk.respText || '';
 
                         const trInd = document.createElement('tr');
                         trInd.className = 'border-b hover:bg-gray-50 transition-colors pirs-ind-row bg-white';
@@ -3985,12 +4018,12 @@
                             <td class="px-4 py-2 border-r editable-cell col-pirs-source ${hCol.source}" contenteditable="true">${prev.source}</td>
                             <td class="px-4 py-2 border-r editable-cell col-pirs-method ${hCol.method}" contenteditable="true">${prev.method}</td>
                             <td class="px-4 py-2 border-r editable-cell col-pirs-calc ${hCol.calc}" contenteditable="true">${prev.calc}</td>
-                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-unit ${hCol.unit}">${auto(tk.unit)}</td>
+                            <td class="px-2 py-2 border-r text-center align-middle col-pirs-unit ${hCol.unit}">${pirsSel('pirs-unit-select', PIRS_UNIT_OPTS, unitVal)}</td>
                             <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 col-pirs-disagg ${hCol.disagg}">${auto(tk.disagg)}</td>
                             <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-baseline ${hCol.baseline}">${auto(tk.baseline)}</td>
                             <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-target ${hCol.target}">${auto(tk.target)}</td>
-                            <td class="px-3 py-2 border-r text-center text-gray-600 bg-purple-50/40 col-pirs-period ${hCol.period}">${auto(tk.freq)}</td>
-                            <td class="px-3 py-2 border-r text-gray-600 bg-purple-50/40 col-pirs-resp ${hCol.resp}">${auto(tk.resp)}</td>
+                            <td class="px-2 py-2 border-r text-center align-middle col-pirs-period ${hCol.period}">${pirsSel('pirs-freq-select', PIRS_FREQ_OPTS, freqVal)}</td>
+                            <td class="px-3 py-2 border-r editable-cell pirs-resp col-pirs-resp ${hCol.resp}" contenteditable="true">${respVal}</td>
                             <td class="px-4 py-2 editable-cell col-pirs-limit ${hCol.limit}" contenteditable="true">${prev.limit}</td>
                         `;
                         frag.appendChild(trInd);
